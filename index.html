@@ -249,7 +249,7 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
 </div></div>
 <div class="modal hide" id="mdYC"><div class="box" style="max-width:620px"><h3 id="mdYCT"></h3>
   <p class="mut" id="mdYCSub"></p>
-  <label class="f">Lý do chưa đạt / nội dung phải sửa (ghi cụ thể để CSKV sửa đúng)<textarea id="ycTx" style="min-height:120px"></textarea></label>
+  <label class="f">Lý do chưa đạt (ngắn gọn)<textarea id="ycTx" style="min-height:120px"></textarea></label>
   <div class="row" style="margin-top:6px;gap:6px" id="ycGoiY"></div>
   <div class="row" style="margin-top:8px">
     <label class="f">Hạn nộp lại (không bắt buộc)<input type="datetime-local" id="ycHan"></label>
@@ -320,8 +320,9 @@ function applyPreset(){
   if(old&&PRESET.ver&&!done.includes(PRESET.id+'@'+PRESET.ver)){ /* cập nhật kết quả kiểm tra chất lượng vào dữ liệu đã có */
     const byName=n=>S.cskv.find(c=>norm(c.ten)===norm(n));const at=new Date().toISOString();
     PRESET.nop.forEach(x=>{const c=byName(x.ten);if(!c||!old.rec[c.id]||!old.rec[c.id].nopLuc)return;const r=old.rec[c.id];
-      if(/^(Sai mẫu|Bổ sung lý do)/.test(r.loi||''))r.loi='';
+      if(/^(Sai mẫu|Bổ sung lý do|Mục I:)/.test(r.loi||''))r.loi='';
       if(x.loi&&!r.loi)r.loi=x.loi;
+      if(r.yeuCau&&!r.nopLai&&/^(Sai mẫu:|Mục III đề nghị loại|\d+ cơ sở ở mục III)/.test(r.yeuCau.lyDo||'')&&x.yc)r.yeuCau.lyDo=x.yc;
       if(x.yc&&!r.yeuCau&&!r.nopLai){r.yeuCau={at,lyDo:x.yc,han:null};r.ycCount=(r.ycCount||0)+1;addLog(old,{kieu:'YC nộp lại',txt:`Đ/c ${c.ten}: ${x.yc}`});}});
     S.settings.presetDone=[...done,PRESET.id,PRESET.id+'@'+PRESET.ver];save();return;}
   if(old||done.includes(PRESET.id))return;
@@ -406,7 +407,7 @@ function ycTag(t,cid){const r=t.rec[cid]||{};let h='';
   if(r.loi)h+=`<div class="tag t-note">ℹ️ Lưu ý: ${esc(r.loi)}</div>`;return h;}
 function redoBtns(t,cid){const n=((t.rec[cid]||{}).nhacLai||[]).length;return`<div class="row"><button class="btn s n2" onclick="openRedoMsg('${t.id}','${cid}')">🔁 Gửi YC nộp lại${n?' ('+n+')':''}</button><button class="btn s g" onclick="markNopLai('${t.id}','${cid}')">✔ Đã nộp lại</button><button class="btn s" onclick="openYC('${t.id}','${cid}')">✏️ Sửa YC</button>${ldBtn(t,cid)}</div>`;}
 function doneBtns(t,cid){const r=t.rec[cid]||{};return`<div class="row"><button class="btn s n3" onclick="openYC('${t.id}','${cid}')">🔁 Chưa đạt – YC nộp lại</button><button class="btn s" onclick="setLoi('${t.id}','${cid}')">ℹ️ ${r.loi?'Sửa lưu ý':'Lưu ý'}</button>${ldBtn(t,cid)}</div>`;}
-const YC_GOIY=['Sai mẫu, dùng biểu khác','Không chia mục I, II, III','Mục III không ghi lý do đề nghị loại','Cùng cơ sở ở cả mục I và mục III','Lý do loại không rõ căn cứ (ghi số liệu thực tế, căn cứ NĐ 105/2025/NĐ-CP)','Thiếu tài liệu giải trình','Thiếu số liệu diện tích, số tầng'];
+const YC_GOIY=['Sai biểu mẫu','Chưa đủ thông tin, cần bổ sung lý do nghỉ hoặc loại','Biểu mẫu chưa đạt: cơ sở loại vẫn để ở mục I','Biểu mẫu chưa đạt: cơ sở nghỉ/bàn giao chỉ ghi chú bên cạnh, chưa chuyển sang mục III','Sai địa bàn','Thiếu thông tin khối tích','Thiếu số tầng, diện tích','Thiếu tài liệu giải trình'];
 let ycCtx=null;
 function openYC(tid,cid){const t=S.tasks.find(x=>x.id===tid),c=cs(cid),r=t.rec[cid]||{};ycCtx={tid,cid};
   $('#mdYCT').textContent='🔁 Bài nộp chưa đạt – yêu cầu nộp lại · Đ/c '+c.ten;
