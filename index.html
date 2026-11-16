@@ -102,6 +102,10 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
 <main>
 <!-- TỔNG QUAN -->
 <section id="tab-tq">
+  <div class="card emptyBox hide" style="background:#eef5ff;border-color:#a9c4ec"><h2>👋 Chưa có danh sách CSKV trên máy này</h2>
+    <p class="mut">Trang web công khai không chứa sẵn họ tên, SĐT cán bộ. Chọn 1 trong các cách sau (chỉ làm 1 lần trên mỗi máy/trình duyệt):</p>
+    <div class="row"><button class="btn p" onclick="$('#fImp').click()">📂 Nạp file sao lưu (.json)</button><button class="btn p" onclick="$('#fCSKVx').click()">📥 Nhập danh sách từ Excel</button>
+      <button class="btn" onclick="document.querySelector('#nav [data-t=ch]').click();setTimeout(()=>$('#sCloud').scrollIntoView({block:'center'}),100)">☁️ Tải từ Google (đã bật lưu Google)</button><button class="btn" onclick="openCSKV()">＋ Thêm tay từng người</button></div></div>
   <div class="card row" style="background:#fff7f6;border-color:#f2b1aa"><div class="grow"><b>📊 Tổng hợp nhanh gửi nhóm Zalo</b><div class="mut">Một bấm: tự liệt kê ai chậm (chưa nộp, quá hạn), ai nộp muộn, ai đã nộp đúng hạn của các nhiệm vụ → soạn sẵn tin nhắn.</div></div><button class="btn p" onclick="openSummary()">📊 Tổng hợp ai chậm – ai muộn – ai đã nộp</button></div>
   <div class="kpis" id="kpis"></div>
   <div class="card" style="margin-top:14px"><h2>⏰ Việc cần nhắc ngay</h2><div class="tw" id="canNhac"></div></div>
@@ -150,7 +154,7 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
   <div class="card">
     <div class="row"><h2 class="grow" style="margin:0">Danh sách CSKV phụ trách địa bàn</h2>
       <input id="dsQ" placeholder="🔍 Tìm tên, thôn, SĐT…" oninput="renderDS()">
-      <button class="btn p" onclick="openCSKV()">＋ Bổ sung CSKV</button>
+      <button class="btn p" onclick="openCSKV()">＋ Bổ sung CSKV</button><button class="btn" onclick="$('#fCSKVx').click()">📥 Nhập từ Excel</button><input type="file" id="fCSKVx" accept=".xlsx,.xls" class="hide" onchange="importCSKVExcel(this)">
       <button class="btn" onclick="exportDSExcel()">📥 Xuất Excel</button></div>
     <p class="mut">Có thể bấm trực tiếp vào ô để sửa nhanh (tự lưu khi rời ô), hoặc bấm ✏️ để sửa đầy đủ.</p>
     <div class="tw" id="dsTable"></div>
@@ -918,7 +922,24 @@ function exportSoExcel(){
 
 /* ===== DANH SÁCH CSKV ===== */
 const FIELDS=[['ten','Họ tên'],['diaBan','Địa bàn phụ trách'],['chiTiet','Địa bàn chi tiết'],['sdt','SĐT'],['email','Email Google'],['nhom','Nhóm'],['ghiChu','Ghi chú']];
+function importCSKVExcel(inp){const f=inp.files[0];inp.value='';if(!f||!needX())return;const rd=new FileReader();
+  rd.onload=()=>{try{const wb=XLSX.read(new Uint8Array(rd.result),{type:'array'});const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:null});
+    const hi=rows.findIndex(r=>r&&r.some(v=>/t[eê]n\s*cskv|h[oọ]\s*(v[aà]\s*)?t[eê]n/i.test(String(v||''))));if(hi<0)throw new Error('Không thấy cột "Tên CSKV" hoặc "Họ tên"');
+    const H=rows[hi].map(v=>norm(v||'').trim());const col=(...re)=>H.findIndex(h=>re.some(x=>x.test(h)));
+    const cTen=col(/ten cskv/,/ho ten/,/ho va ten/),cDB=col(/dia ban moi/,/dia ban phu trach/,/^dia ban$/),cCT=col(/chi tiet/),cSdt=col(/dien thoai/,/sdt/),cGC=col(/ghi chu/),cEm=col(/email/);
+    let nhom='',moi=0,sua=0;
+    rows.slice(hi+1).forEach(r=>{if(!r)return;const ten=cTen>=0?String(r[cTen]??'').trim():'';const a=String(r[0]??'').trim();
+      if(!ten){if(a&&isNaN(+a)&&!/^\d+$/.test(a)&&r.slice(1).every(v=>v===null||String(v).trim()===''))nhom=a.replace(/\s+/g,' ');return;}
+      if(/^\d+$/.test(ten))return;
+      const v=k=>k>=0&&r[k]!==null?String(r[k]).trim():'';const sdt=v(cSdt).replace(/^(\d{9})$/,'0$1');
+      const d={ten,diaBan:v(cDB),chiTiet:v(cCT),sdt,ghiChu:v(cGC),nhom:nhom?nhom.charAt(0)+nhom.slice(1).toLowerCase():''};if(v(cEm))d.email=v(cEm);
+      const c=S.cskv.find(x=>norm(x.ten)===norm(ten));
+      if(c){Object.entries(d).forEach(([k,val])=>{if(val)c[k]=val;});c.active=true;sua++;}else{S.cskv.push({id:uid(),...d,active:true});moi++;}});
+    if(!moi&&!sua)throw new Error('Không đọc được dòng CSKV nào');
+    save();renderAll();toast(`Đã nhập: ${moi} CSKV mới, cập nhật ${sua} CSKV`);}
+  catch(e){alert('Không nhập được danh sách: '+e.message);}};rd.readAsArrayBuffer(f);}
 function renderDS(){
+  document.querySelectorAll('.emptyBox').forEach(x=>x.classList.toggle('hide',S.cskv.length>0));
   const q=($('#dsQ').value||'').toLowerCase();
   const l=S.cskv.filter(c=>!q||FIELDS.some(([k])=>String(c[k]||'').toLowerCase().includes(q)));
   $('#dsTable').innerHTML=`<table><tr><th>TT</th>${FIELDS.map(f=>`<th>${f[1]}</th>`).join('')}<th>Trạng thái</th><th></th></tr>
