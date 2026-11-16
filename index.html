@@ -37,7 +37,7 @@ th,td{border-bottom:1px solid var(--bd);padding:6px 8px;text-align:left;vertical
 th{background:#f7f8fa;font-weight:600;white-space:nowrap;position:sticky;top:0}
 tr:hover td{background:#fafbfc}
 .tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
-.t-ok{background:var(--okb);color:var(--ok)}.t-late{background:var(--lateb);color:var(--late)}.t-over{background:var(--badb);color:var(--bad)}.t-soon{background:var(--warnb);color:var(--warn)}.t-wait{background:var(--infob);color:var(--info)}.t-na{background:#eee;color:#888}.t-ld{background:#eef3ff;color:#2a4d8f;white-space:normal;margin-top:3px}
+.t-ok{background:var(--okb);color:var(--ok)}.t-late{background:var(--lateb);color:var(--late)}.t-over{background:var(--badb);color:var(--bad)}.t-soon{background:var(--warnb);color:var(--warn)}.t-wait{background:var(--infob);color:var(--info)}.t-na{background:#eee;color:#888}.t-redo{background:#ffe9d6;color:#9a4300}.t-note{background:#f3f0e6;color:#6b5a1e;white-space:normal;margin-top:3px}.t-ld{background:#eef3ff;color:#2a4d8f;white-space:normal;margin-top:3px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .kpi{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
 .kpi b{font-size:24px;display:block}
@@ -60,6 +60,8 @@ tr:hover td{background:#fafbfc}
 td.ed{cursor:text}
 td .row{flex-wrap:wrap;gap:4px;min-width:200px}
 .grid2>div{min-width:0}
+.t-redo,.t-ld,.t-note{border-radius:8px}
+td:has(div.t-redo),td:has(div.t-note){min-width:280px}
 td:has(.t-ld),td:has(.t-over+div),td:has(div.t-over){min-width:190px}
 details summary{cursor:pointer;font-weight:600;margin:6px 0}
 pre.code{background:#1d2733;color:#e8eef5;padding:10px;border-radius:8px;overflow:auto;font-size:12px;max-height:300px}
@@ -140,6 +142,7 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
     <label class="f">Nhắc lần 2 (cá nhân)<textarea id="m2"></textarea></label>
     <label class="f">Nhắc lần 3 – lần cuối (cá nhân)<textarea id="m3"></textarea></label>
     <label class="f">Tin nhắc chung cả nhóm (gộp các CSKV chưa nộp)<textarea id="mG" style="min-height:130px"></textarea></label>
+    <label class="f">Yêu cầu nộp lại (cá nhân). Biến riêng: <code>{nopLuc}</code> <code>{lyDoNopLai}</code> <code>{hanNopLai}</code> <code>{linkMuon}</code> <code>{linkNop}</code><textarea id="mR" style="min-height:110px"></textarea></label>
     <label class="f">Tin tình hình nộp gửi nhóm (đã nộp + chưa nộp). Biến riêng: <code>{dsDaNop}</code> <code>{dsChuaNop}</code> <code>{soDaNop}</code> <code>{soChuaNop}</code> <code>{tongSo}</code><textarea id="mT" style="min-height:200px"></textarea></label>
     <div class="row" style="margin-top:8px"><button class="btn p" onclick="saveSettings()">Lưu cài đặt</button><button class="btn" onclick="resetTpl()">Khôi phục mẫu mặc định</button></div>
   </div>
@@ -170,7 +173,14 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
     <label class="f">Hạn hoàn thành *<input type="datetime-local" id="tHan"></label>
   </div>
   <label class="f" style="margin-top:6px">Ghi chú / yêu cầu<input id="tGhiChu"></label>
-  <label class="f" style="margin-top:6px">📁 Link thư mục Google Drive nhận bài (không bắt buộc)<input id="tDrive" placeholder="https://drive.google.com/drive/folders/…"></label>
+  <div class="row" style="margin-top:6px">
+    <label class="f grow">🔗 Link nộp chính (Google Form…)<input id="tLinkNop" placeholder="https://forms.gle/…"></label>
+    <label class="f grow">🔁 Link nộp bổ sung / nộp muộn<input id="tLinkMuon" placeholder="https://forms.gle/…"></label>
+  </div>
+  <div class="row" style="margin-top:6px">
+    <label class="f grow">📁 Thư mục Drive nhận bài – link chính<input id="tDrive" placeholder="https://drive.google.com/drive/folders/…"></label>
+    <label class="f grow">📁 Thư mục Drive nhận bài – link nộp bổ sung<input id="tDriveMuon" placeholder="https://drive.google.com/drive/folders/…"></label>
+  </div>
   <div class="row" style="margin:8px 0 4px"><b class="grow">Giao cho CSKV</b><button class="btn s" onclick="chkAll(true)">Chọn tất</button><button class="btn s" onclick="chkAll(false)">Bỏ chọn</button></div>
   <div class="chk" id="tChk"></div>
   <div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn" onclick="closeMd('mdTask')">Huỷ</button><button class="btn p" onclick="saveTask()">Lưu</button></div>
@@ -237,12 +247,22 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
   <label style="display:block;margin-top:8px"><input type="checkbox" id="lyDoChap"> Lý do chính đáng – <b>không tính chậm muộn</b> khi tổng kết (vẫn ghi trong sổ)</label>
   <div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn" onclick="saveLyDo(true)">Xoá lý do</button><span class="grow"></span><button class="btn" onclick="closeMd('mdLyDo')">Huỷ</button><button class="btn p" onclick="saveLyDo(false)">Lưu</button></div>
 </div></div>
+<div class="modal hide" id="mdYC"><div class="box" style="max-width:620px"><h3 id="mdYCT"></h3>
+  <p class="mut" id="mdYCSub"></p>
+  <label class="f">Lý do chưa đạt / nội dung phải sửa (ghi cụ thể để CSKV sửa đúng)<textarea id="ycTx" style="min-height:120px"></textarea></label>
+  <div class="row" style="margin-top:6px;gap:6px" id="ycGoiY"></div>
+  <div class="row" style="margin-top:8px">
+    <label class="f">Hạn nộp lại (không bắt buộc)<input type="datetime-local" id="ycHan"></label>
+    <label class="f grow">Link nộp bổ sung / nộp muộn (dùng chung cho nhiệm vụ)<input id="ycLink" placeholder="https://forms.gle/…"></label>
+  </div>
+  <div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn" id="ycHuy" onclick="saveYC(true)">Huỷ yêu cầu</button><span class="grow"></span><button class="btn" onclick="closeMd('mdYC')">Đóng</button><button class="btn p" onclick="saveYC(false)">Lưu yêu cầu</button></div>
+</div></div>
 <div class="toast" id="toast"></div>
 
 <script>
 const SEED = []; /* Danh sách CSKV: nạp bằng nút "📂 Khôi phục" hoặc thêm tay. Mã nguồn công khai không chứa dữ liệu cá nhân. */
 const KEY='sotheodoi_cskv_donganh_v1';
-const TPL_VER=2;
+const TPL_VER=3;
 /* Dữ liệu thực tế đã cập nhật: Phiếu rà soát cơ sở T11/2026 (từ thư mục Google Form trên Drive) */
 const PRESET=null;
 
@@ -261,12 +281,19 @@ Hạn: {han} – {tinhTrang}. Căn cứ: {canCu}.
 Còn {soLuong} đ/c chưa nộp:
 {danhSach}
 Đề nghị các đ/c khẩn trương hoàn thành, gửi về {nguoiGui}.`,
+mR:`🔁 Yêu cầu nộp lại: đ/c {ten} (CSKV {diaBan}) đã nộp {nhiemVu} lúc {nopLuc} nhưng CHƯA ĐẠT.
+Lý do: {lyDoNopLai}
+Đề nghị đ/c sửa đúng hướng dẫn và nộp lại {hanNopLai} qua link nộp bổ sung: {linkMuon}`,
 mT:`📊 TÌNH HÌNH NỘP: {nhiemVu}
 Hạn: {han} – {tinhTrang}. Căn cứ: {canCu}.
-Tổng số {tongSo} đ/c: đã nộp {soDaNop}, chưa nộp {soChuaNop}.
+Tổng số {tongSo} đ/c: đạt {soDaNop}, phải nộp lại {soNopLai}, chưa nộp {soChuaNop}.
 
-✅ ĐÃ NỘP ({soDaNop}):
+✅ ĐÃ NỘP, ĐẠT ({soDaNop}):
 {dsDaNop}
+
+🔁 ĐÃ NỘP NHƯNG CHƯA ĐẠT – PHẢI NỘP LẠI ({soNopLai}):
+{dsNopLai}
+👉 Nộp lại qua link: {linkMuon}
 
 ❌ CHƯA NỘP ({soChuaNop}):
 {dsChuaNop}
@@ -288,17 +315,27 @@ function load(){
 }
 function applyPreset(){
   if(!PRESET)return;
-  if(S.tasks.some(t=>t.id===PRESET.id||t.ten===PRESET.ten)||(S.settings.presetDone||[]).includes(PRESET.id))return;
+  const done=S.settings.presetDone||[];
+  const old=S.tasks.find(t=>t.id===PRESET.id||t.ten===PRESET.ten);
+  if(old&&PRESET.ver&&!done.includes(PRESET.id+'@'+PRESET.ver)){ /* cập nhật kết quả kiểm tra chất lượng vào dữ liệu đã có */
+    const byName=n=>S.cskv.find(c=>norm(c.ten)===norm(n));const at=new Date().toISOString();
+    PRESET.nop.forEach(x=>{const c=byName(x.ten);if(!c||!old.rec[c.id]||!old.rec[c.id].nopLuc)return;const r=old.rec[c.id];
+      if(/^(Sai mẫu|Bổ sung lý do)/.test(r.loi||''))r.loi='';
+      if(x.loi&&!r.loi)r.loi=x.loi;
+      if(x.yc&&!r.yeuCau&&!r.nopLai){r.yeuCau={at,lyDo:x.yc,han:null};r.ycCount=(r.ycCount||0)+1;addLog(old,{kieu:'YC nộp lại',txt:`Đ/c ${c.ten}: ${x.yc}`});}});
+    S.settings.presetDone=[...done,PRESET.id,PRESET.id+'@'+PRESET.ver];save();return;}
+  if(old||done.includes(PRESET.id))return;
   const byName=n=>S.cskv.find(c=>norm(c.ten)===norm(n));
   Object.entries(PRESET.emails).forEach(([n,e])=>{const c=byName(n);if(c&&!c.email)c.email=e;});
   const t={id:PRESET.id,ten:PRESET.ten,han:PRESET.han,canCu:PRESET.canCu,ghiChu:PRESET.ghiChu,drive:PRESET.drive,created:PRESET.created,
     assign:S.cskv.filter(c=>c.active).map(c=>c.id),rec:{},fileMap:{},files:[],log:[{at:PRESET.created,kieu:'Giao nhiệm vụ',txt:'Giao cho các đ/c CSKV – nộp qua Google Form'}]};
   PRESET.nop.forEach(x=>{const c=byName(x.ten);if(!c)return;if(!t.assign.includes(c.id))t.assign.push(c.id);
     t.rec[c.id]={nhac:[],nopLuc:x.nopLuc,nguon:'drive',file:x.file,loi:x.loi||''};
+    if(x.yc){t.rec[c.id].yeuCau={at:new Date().toISOString(),lyDo:x.yc,han:null};t.rec[c.id].ycCount=1;}
     t.files.push({id:x.fid,name:x.file.name,path:'',url:x.file.url,created:x.nopLuc,ownerEmail:PRESET.emails[x.ten]||'',ownerName:'',cid:c.id});
-    t.log.push({at:x.nopLuc,kieu:'Nộp qua Drive',txt:`Đ/c ${c.ten} nộp lúc ${fmtDT(x.nopLuc)}: ${x.file.name}`+(x.loi?' – ⚠ '+x.loi:'')});});
+    t.log.push({at:x.nopLuc,kieu:'Nộp qua Drive',txt:`Đ/c ${c.ten} nộp lúc ${fmtDT(x.nopLuc)}: ${x.file.name}`+(x.yc?' – 🔁 Chưa đạt: '+x.yc:'')});});
   t.log.sort((a,b)=>a.at<b.at?-1:1);
-  S.tasks.push(t);S.settings.presetDone=[...(S.settings.presetDone||[]),PRESET.id];curTask=t.id;save();
+  S.tasks.push(t);S.settings.presetDone=[...(S.settings.presetDone||[]),PRESET.id,PRESET.id+'@'+(PRESET.ver||1)];curTask=t.id;save();
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast('⚠️ Không lưu được vào trình duyệt – hãy dùng Sao lưu');}}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('on'),2200);}
@@ -310,25 +347,35 @@ const nowLocal=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezone
 /* ===== TRẠNG THÁI ===== */
 function stOf(task,cid){
   const r=task.rec[cid]||{};const han=new Date(task.han).getTime();
-  if(r.nopLuc){return new Date(r.nopLuc).getTime()>han?'late':'ok';}
+  if(r.nopLuc){
+    if(r.yeuCau&&!r.nopLai)return'redo';
+    const tre=new Date(r.nopLuc).getTime()>han||(r.yeuCau&&r.yeuCau.han&&r.nopLai&&new Date(r.nopLai)>new Date(r.yeuCau.han));
+    return tre?'late':'ok';}
   const now=Date.now();
   if(now>han)return'over';
   if(han-now<24*3600e3)return'soon';
   return'wait';
 }
-const ST={ok:['Đúng hạn','t-ok'],late:['Nộp muộn','t-late'],over:['Quá hạn','t-over'],soon:['Sắp đến hạn','t-soon'],wait:['Chưa đến hạn','t-wait']};
+const ST={ok:['Đúng hạn','t-ok'],late:['Nộp muộn','t-late'],over:['Quá hạn','t-over'],soon:['Sắp đến hạn','t-soon'],wait:['Chưa đến hạn','t-wait'],redo:['Phải nộp lại','t-redo']};
 const tagSt=s=>`<span class="tag ${ST[s][1]}">${ST[s][0]}</span>`;
 function quaHanTxt(task){const d=Date.now()-new Date(task.han).getTime();if(d<=0)return'';const h=Math.floor(d/3600e3);return h<24?` (đã quá hạn ${h} giờ)`:` (đã quá hạn ${Math.floor(h/24)} ngày)`;}
 function dayDiff(a,b){const d=x=>{const y=new Date(x);y.setHours(0,0,0,0);return y;};return Math.round((d(a)-d(b))/864e5);}
 /* Thông tin hạn/chậm: ref = thời điểm nộp (nếu đã nộp) hoặc hiện tại */
 function chamInfo(task,cid){
-  const r=cid?(task.rec[cid]||{}):{};const han=new Date(task.han);const ref=r.nopLuc?new Date(r.nopLuc):new Date();
+  const r=cid?(task.rec[cid]||{}):{};
+  if(r.nopLuc&&r.yeuCau&&!r.nopLai){
+    if(!r.yeuCau.han)return{ngay:0,txt:'Chờ nộp lại',tt:'Đang chờ nộp lại'};
+    const hl=new Date(r.yeuCau.han),now=new Date(),ms2=now-hl;
+    if(ms2<=0){const dd=dayDiff(hl,now);return{ngay:0,txt:dd===0?'Nộp lại: hạn hôm nay':`Nộp lại: còn ${dd} ngày`,tt:dd===0?'Hôm nay là hạn nộp lại':`Còn ${dd} ngày đến hạn nộp lại`};}
+    const dd=dayDiff(now,hl);const so=dd>0?`${dd} ngày`:`${Math.max(1,Math.ceil(ms2/3600e3))} giờ`;
+    return{ngay:Math.max(dd,0),so,txt:'Chậm nộp lại '+so,tt:'Đã quá hạn nộp lại '+so};}
+  const han=new Date(task.han);const ref=r.nopLuc?new Date(r.nopLuc):new Date();
   const ms=ref-han;
   if(ms<=0){if(r.nopLuc)return{ngay:0,txt:'Đúng hạn',tt:'Đúng hạn'};const dd=dayDiff(han,ref);const txt=dd===0?'Hạn hôm nay':`Còn ${dd} ngày`;return{ngay:0,txt,tt:dd===0?'Hôm nay là hạn cuối':`Còn ${dd} ngày đến hạn`};}
   const dd=dayDiff(ref,han);const so=dd>0?`${dd} ngày`:`${Math.max(1,Math.ceil(ms/3600e3))} giờ`;
   return{ngay:Math.max(dd,0),so,txt:(r.nopLuc?'Muộn ':'Chậm ')+so,tt:'Đã quá hạn '+so};
 }
-function chamTag(task,cid){const c=chamInfo(task,cid);const cls=c.so?(task.rec[cid]&&task.rec[cid].nopLuc?'t-late':'t-over'):(c.txt==='Đúng hạn'?'t-ok':(c.txt==='Hạn hôm nay'?'t-soon':'t-wait'));return`<span class="tag ${cls}">${c.txt}</span>`;}
+function chamTag(task,cid){const c=chamInfo(task,cid);if(cid&&stOf(task,cid)==='redo')return`<span class="tag t-redo">${c.txt}</span>`;const cls=c.so?(task.rec[cid]&&task.rec[cid].nopLuc?'t-late':'t-over'):(c.txt==='Đúng hạn'?'t-ok':(c.txt==='Hạn hôm nay'?'t-soon':'t-wait'));return`<span class="tag ${cls}">${c.txt}</span>`;}
 function nhacCount(task,cid){return((task.rec[cid]||{}).nhac||[]).length;}
 
 /* ===== TABS ===== */
@@ -341,17 +388,48 @@ function renderAll(){$('#hdDonVi').textContent=S.settings.donVi;renderTQ();rende
 
 /* ===== TỔNG QUAN ===== */
 function renderTQ(){
-  let open=0,over=0,soon=0,late=0;const rows=[];
+  let open=0,over=0,soon=0,late=0,redo=0;const rows=[];
   S.tasks.forEach(t=>{let o=false;t.assign.forEach(cid=>{const s=stOf(t,cid);const c=cs(cid);if(!c)return;
+    if(s==='redo'){redo++;o=true;rows.push([t,c,s]);}
     if(s==='over'||s==='soon'||s==='wait')o=true;if(s==='over'){over++;rows.push([t,c,s]);}if(s==='soon'){soon++;rows.push([t,c,s]);}if(s==='late')late++;});if(o)open++;});
   const active=S.cskv.filter(c=>c.active).length;
-  $('#kpis').innerHTML=[[active,'CSKV đang theo dõi'],[open,'Nhiệm vụ đang mở'],[over,'Lượt quá hạn chưa nộp','var(--bad)'],[soon,'Lượt sắp đến hạn (<24h)','var(--warn)'],[late,'Lượt đã nộp muộn','var(--late)']]
+  $('#kpis').innerHTML=[[active,'CSKV đang theo dõi'],[open,'Nhiệm vụ đang mở'],[over,'Lượt quá hạn chưa nộp','var(--bad)'],[soon,'Lượt sắp đến hạn (<24h)','var(--warn)'],[redo,'Lượt phải nộp lại','#9a4300'],[late,'Lượt đã nộp muộn','var(--late)']]
     .map(k=>`<div class="kpi"><b style="color:${k[2]||'inherit'}">${k[0]}</b><span>${k[1]}</span></div>`).join('');
   rows.sort((a,b)=>new Date(a[0].han)-new Date(b[0].han));
-  $('#canNhac').innerHTML=rows.length?`<table><tr><th>CSKV</th><th>Địa bàn</th><th>Nhiệm vụ</th><th>Hạn</th><th>Chậm / còn</th><th>Trạng thái</th><th>Đã nhắc</th><th>Thao tác</th></tr>${rows.map(([t,c,s])=>`<tr><td>${esc(c.ten)}</td><td>${esc(c.diaBan)}</td><td>${esc(t.ten)}</td><td>${fmtDT(t.han)}</td><td>${chamTag(t,c.id)}</td><td>${tagSt(s)}${ldTag(t,c.id)}</td><td>${nhacCount(t,c.id)} lần</td><td>${nhacBtns(t,c.id)}</td></tr>`).join('')}</table>`:'<p class="mut">✅ Không có CSKV nào quá hạn hoặc sắp đến hạn.</p>';
+  $('#canNhac').innerHTML=rows.length?`<table><tr><th>CSKV</th><th>Địa bàn</th><th>Nhiệm vụ</th><th>Hạn</th><th>Chậm / còn</th><th>Trạng thái</th><th>Đã nhắc</th><th>Thao tác</th></tr>${rows.map(([t,c,s])=>`<tr><td>${esc(c.ten)}</td><td>${esc(c.diaBan)}</td><td>${esc(t.ten)}</td><td>${fmtDT(t.han)}</td><td>${chamTag(t,c.id)}</td><td>${tagSt(s)}${ycTag(t,c.id)}${ldTag(t,c.id)}</td><td>${nhacCount(t,c.id)} lần</td><td>${s==='redo'?redoBtns(t,c.id):nhacBtns(t,c.id)}</td></tr>`).join('')}</table>`:'<p class="mut">✅ Không có CSKV nào quá hạn, sắp đến hạn hoặc phải nộp lại.</p>';
 }
 function nhacBtns(t,cid){const n=nhacCount(t,cid);
   return `<div class="row">${[1,2,3].map(l=>`<button class="btn s n${l}" ${l!==Math.min(n+1,3)&&!(n>=3&&l===3)?'style="opacity:.55"':''} onclick="openMsg('${t.id}','${cid}',${l})">Nhắc ${l}</button>`).join('')}<button class="btn s g" onclick="markNop('${t.id}','${cid}')">✔ Đã nộp</button>${ldBtn(t,cid)}</div>`;}
+function ycTag(t,cid){const r=t.rec[cid]||{};let h='';
+  if(r.yeuCau)h+=`<div class="tag t-redo" style="white-space:normal;margin-top:3px">🔁 ${r.nopLai?'Đã yêu cầu nộp lại':'Yêu cầu nộp lại'}: ${esc(r.yeuCau.lyDo)}${r.yeuCau.han&&!r.nopLai?' – hạn '+fmtDT(r.yeuCau.han):''}</div>`;
+  if(r.nopLai)h+=`<div class="tag t-ok" style="margin-top:3px">✔ Đã nộp lại ${fmtDT(r.nopLai)}</div>`;
+  if(r.loi)h+=`<div class="tag t-note">ℹ️ Lưu ý: ${esc(r.loi)}</div>`;return h;}
+function redoBtns(t,cid){const n=((t.rec[cid]||{}).nhacLai||[]).length;return`<div class="row"><button class="btn s n2" onclick="openRedoMsg('${t.id}','${cid}')">🔁 Gửi YC nộp lại${n?' ('+n+')':''}</button><button class="btn s g" onclick="markNopLai('${t.id}','${cid}')">✔ Đã nộp lại</button><button class="btn s" onclick="openYC('${t.id}','${cid}')">✏️ Sửa YC</button>${ldBtn(t,cid)}</div>`;}
+function doneBtns(t,cid){const r=t.rec[cid]||{};return`<div class="row"><button class="btn s n3" onclick="openYC('${t.id}','${cid}')">🔁 Chưa đạt – YC nộp lại</button><button class="btn s" onclick="setLoi('${t.id}','${cid}')">ℹ️ ${r.loi?'Sửa lưu ý':'Lưu ý'}</button>${ldBtn(t,cid)}</div>`;}
+const YC_GOIY=['Sai mẫu, dùng biểu khác','Không chia mục I, II, III','Mục III không ghi lý do đề nghị loại','Cùng cơ sở ở cả mục I và mục III','Lý do loại không rõ căn cứ (ghi số liệu thực tế, căn cứ NĐ 105/2025/NĐ-CP)','Thiếu tài liệu giải trình','Thiếu số liệu diện tích, số tầng'];
+let ycCtx=null;
+function openYC(tid,cid){const t=S.tasks.find(x=>x.id===tid),c=cs(cid),r=t.rec[cid]||{};ycCtx={tid,cid};
+  $('#mdYCT').textContent='🔁 Bài nộp chưa đạt – yêu cầu nộp lại · Đ/c '+c.ten;
+  $('#mdYCSub').textContent=t.ten+' · Đã nộp lúc '+fmtDT(r.nopLuc)+(r.file?' · '+r.file.name:'');
+  $('#ycTx').value=r.yeuCau?r.yeuCau.lyDo:'';$('#ycHan').value=r.yeuCau&&r.yeuCau.han?r.yeuCau.han.slice(0,16):'';$('#ycLink').value=t.linkMuon||'';
+  $('#ycGoiY').innerHTML=YC_GOIY.map(s=>`<button class="btn s" onclick="$('#ycTx').value=($('#ycTx').value?$('#ycTx').value+'; ':'')+this.textContent">${s}</button>`).join('');
+  $('#ycHuy').classList.toggle('hide',!r.yeuCau);$('#mdYC').classList.remove('hide');setTimeout(()=>$('#ycTx').focus(),50);}
+function saveYC(huy){const t=S.tasks.find(x=>x.id===ycCtx.tid),r=rec(t,ycCtx.cid),c=cs(ycCtx.cid);
+  t.linkMuon=$('#ycLink').value.trim();
+  if(huy){if(!confirm('Huỷ yêu cầu nộp lại? Bài nộp lần đầu được coi là đạt.'))return;delete r.yeuCau;delete r.nopLai;addLog(t,{kieu:'Huỷ YC nộp lại',txt:'Đ/c '+c.ten});save();closeMd('mdYC');renderAll();return;}
+  const ly=$('#ycTx').value.trim();if(!ly){alert('Ghi rõ lý do bài nộp chưa đạt để CSKV sửa đúng.');return;}
+  const hv=$('#ycHan').value;const moi=!r.yeuCau;
+  r.yeuCau={at:moi?new Date().toISOString():r.yeuCau.at,lyDo:ly,han:hv?new Date(hv).toISOString():null};
+  if(moi){r.ycCount=(r.ycCount||0)+1;delete r.nopLai;}
+  addLog(t,{kieu:moi?'YC nộp lại':'Sửa YC nộp lại',txt:`Đ/c ${c.ten}: ${ly}${hv?' – hạn nộp lại '+fmtDT(hv):''}`});
+  save();closeMd('mdYC');renderAll();if(moi&&confirm('Đã ghi yêu cầu nộp lại. Soạn tin nhắn gửi đ/c '+c.ten+' ngay?'))openRedoMsg(t.id,c.id);}
+function markNopLai(tid,cid){const t=S.tasks.find(x=>x.id===tid);const v=prompt('Thời điểm nộp lại (để nguyên = hiện tại). Định dạng: YYYY-MM-DDTHH:MM',nowLocal());if(v===null)return;
+  const d=new Date(v);if(isNaN(d)){alert('Thời điểm không hợp lệ');return;}const r=rec(t,cid);r.nopLai=d.toISOString();r.nguonLai='tay';
+  addLog(t,{kieu:'Nộp lại',txt:`Đ/c ${cs(cid).ten} nộp lại lúc ${fmtDT(d)} (ghi tay)`});save();renderAll();toast('Đã ghi nhận nộp lại');}
+function openRedoMsg(tid,cid){const t=S.tasks.find(x=>x.id===tid),c=cs(cid),r=t.rec[cid]||{};
+  msgCtx={tid,cids:[cid],lan:'R',phone:c.sdt};
+  $('#mdMsgT').textContent='🔁 Yêu cầu nộp lại – Đ/c '+c.ten;$('#mdMsgSub').textContent=`Đã gửi YC nộp lại ${(r.nhacLai||[]).length} lần · SĐT: ${c.sdt||'chưa có'}`;
+  $('#msgTx').value=fill(S.settings.tpl.mR,t,c);$('#btnPriv').disabled=!c.sdt;showMsg(false);}
 function ldBtn(t,cid){const r=t.rec[cid]||{};return`<button class="btn s" style="${r.lyDo?'background:#eef3ff;border-color:#a9bfe8':''}" title="Lý do / giải trình" onclick="openLyDo('${t.id}','${cid}')">📝 ${r.lyDo?'Sửa lý do':'Lý do'}</button>`;}
 function ldTag(t,cid){const r=t.rec[cid]||{};return r.lyDo?`<div class="tag t-ld">📝 ${esc(r.lyDo)}${r.chap?' <b>(được chấp nhận)</b>':''}</div>`:'';}
 let ldCtx=null;
@@ -367,7 +445,8 @@ function saveLyDo(clear){const t=S.tasks.find(x=>x.id===ldCtx.tid),r=rec(t,ldCtx
   save();closeMd('mdLyDo');renderAll();toast('Đã lưu lý do');}
 
 /* ===== NHIỆM VỤ ===== */
-function taskProg(t){const tot=t.assign.length;const d=t.assign.filter(c=>t.rec[c]&&t.rec[c].nopLuc).length;return[d,tot];}
+function taskProg(t){const tot=t.assign.length;const d=t.assign.filter(c=>t.rec[c]&&t.rec[c].nopLuc&&!(t.rec[c].yeuCau&&!t.rec[c].nopLai)).length;return[d,tot];}
+const isRedo=(t,c)=>{const r=t.rec[c]||{};return!!(r.nopLuc&&r.yeuCau&&!r.nopLai);};
 function renderTasks(){
   const f=$('#fTaskSt').value;
   const list=[...S.tasks].sort((a,b)=>new Date(b.han)-new Date(a.han)).filter(t=>{const[d,tot]=taskProg(t);return!f||(f==='done'?d===tot:d<tot);});
@@ -382,21 +461,22 @@ function renderDetail(){
   el.innerHTML=`<div class="row"><h2 class="grow" style="margin:0">${esc(t.ten)}</h2>
    <button class="btn s" onclick="openTask('${t.id}')">✏️ Sửa</button><button class="btn s" onclick="delTask('${t.id}')">🗑 Xoá</button></div>
    <p class="mut">Căn cứ: ${esc(t.canCu||'—')} · Hạn: <b>${fmtDT(t.han)}</b> (${chamInfo(t,null).tt.toLowerCase()}) · Đã nộp ${d}/${tot}${t.ghiChu?' · '+esc(t.ghiChu):''}</p>
+   ${t.linkNop||t.linkMuon?`<p class="mut">${t.linkNop?`🔗 <a href="${esc(t.linkNop)}" target="_blank">Link nộp chính</a> `:''}${t.linkMuon?`· 🔁 <a href="${esc(t.linkMuon)}" target="_blank">Link nộp bổ sung / nộp muộn</a>`:''}</p>`:''}
    ${t.drive?`<p class="mut">📁 <a href="${esc(t.drive)}" target="_blank">Thư mục Drive nhận bài</a> · ${t.files.length} file · ${t.driveErr?'<span class="bad-tx">Lỗi: '+esc(t.driveErr)+'</span>':(S.settings.lastSync?'đồng bộ lúc '+fmtDT(S.settings.lastSync):'chưa đồng bộ')} <button class="btn s" onclick="syncDrive(false)">🔄 Đồng bộ</button></p>`:''}
    <div class="row" style="margin-bottom:8px"><button class="btn p" onclick="openTongHop('${t.id}')">📊 Gửi tình hình nộp vào nhóm (đã nộp ${d} / chưa nộp ${chua.length})</button><button class="btn" ${chua.length?'':'disabled'} onclick="openGroupMsg('${t.id}')">📢 Chỉ nhắc ${chua.length} đ/c chưa nộp</button>
-   <select id="dtF" onchange="renderDetail()"><option value="">Tất cả</option><option value="chua">Chưa nộp</option><option value="over">Quá hạn</option><option value="late">Nộp muộn</option><option value="ok">Đúng hạn</option><option value="loi">Sai mẫu / cần bổ sung</option><option value="ld">Có lý do giải trình</option></select></div>
+   <select id="dtF" onchange="renderDetail()"><option value="">Tất cả</option><option value="chua">Chưa nộp</option><option value="over">Quá hạn</option><option value="late">Nộp muộn</option><option value="ok">Đúng hạn</option><option value="redo">Phải nộp lại</option><option value="loi">Có lưu ý</option><option value="ld">Có lý do giải trình</option></select></div>
    <div class="tw"><table><tr><th>TT</th><th>CSKV</th><th>Địa bàn</th><th>Hạn</th><th>Chậm / còn</th><th>Trạng thái</th><th>Thời điểm nộp</th><th>Lịch sử nhắc</th><th>Thao tác</th></tr>
-   ${t.assign.map(cid=>cs(cid)).filter(Boolean).filter(c=>{const v=el._f||'',s=stOf(t,c.id);return!v||(v==='ld'?!!(t.rec[c.id]&&t.rec[c.id].lyDo):v==='loi'?!!(t.rec[c.id]&&t.rec[c.id].loi):v==='chua'?['over','soon','wait'].includes(s):s===v);}).map((c,i)=>{const r=t.rec[c.id]||{};const s=stOf(t,c.id);
-     return`<tr><td>${i+1}</td><td>${esc(c.ten)}</td><td>${esc(c.diaBan||c.chiTiet)}</td><td>${fmtD(t.han)}</td><td>${chamTag(t,c.id)}</td><td>${tagSt(s)}${r.loi?`<div class="tag t-over" style="white-space:normal;margin-top:3px">⚠ ${esc(r.loi)}</div>`:''}${ldTag(t,c.id)}</td>
-     <td>${r.nopLuc?fmtDT(r.nopLuc)+(r.nguon==='drive'?` <a href="${esc(r.file&&r.file.url)}" target="_blank" title="${esc(r.file&&r.file.name)}">📁</a>`:'')+` <button class="btn s" title="Huỷ ghi nhận nộp" onclick="unNop('${t.id}','${c.id}')">↺</button>`:''}</td>
+   ${t.assign.map(cid=>cs(cid)).filter(Boolean).filter(c=>{const v=el._f||'',s=stOf(t,c.id);return!v||(v==='redo'?s==='redo':v==='ld'?!!(t.rec[c.id]&&t.rec[c.id].lyDo):v==='loi'?!!(t.rec[c.id]&&t.rec[c.id].loi):v==='chua'?['over','soon','wait'].includes(s):s===v);}).map((c,i)=>{const r=t.rec[c.id]||{};const s=stOf(t,c.id);
+     return`<tr><td>${i+1}</td><td>${esc(c.ten)}</td><td>${esc(c.diaBan||c.chiTiet)}</td><td>${fmtD(t.han)}</td><td>${chamTag(t,c.id)}</td><td>${tagSt(s)}${ycTag(t,c.id)}${ldTag(t,c.id)}</td>
+     <td>${r.nopLuc?fmtDT(r.nopLuc)+(r.nguon==='drive'?` <a href="${esc(r.file&&r.file.url)}" target="_blank" title="${esc(r.file&&r.file.name)}">📁</a>`:'')+` <button class="btn s" title="Huỷ ghi nhận nộp" onclick="unNop('${t.id}','${c.id}')">↺</button>`+(r.nopLai?`<div class="mut">Nộp lại: ${fmtDT(r.nopLai)}${r.nguonLai==='drive'&&r.fileLai?` <a href="${esc(r.fileLai.url)}" target="_blank" title="${esc(r.fileLai.name)}">📁</a>`:''}</div>`:''):''}</td>
      <td class="mut">${(r.nhac||[]).map(n=>`Lần ${n.lan}: ${fmtDT(n.at)}`).join('<br>')||'—'}</td>
-     <td>${r.nopLuc?`<button class="btn s ${r.loi?'n3':''}" onclick="setLoi('${t.id}','${c.id}')">⚠ ${r.loi?'Sửa lỗi':'Báo sai mẫu'}</button>${ldBtn(t,c.id)}`:nhacBtns(t,c.id)}</td></tr>`}).join('')}</table></div>${unmatchedHTML(t)}${logHTML(t)}`;
+     <td>${!r.nopLuc?nhacBtns(t,c.id):s==='redo'?redoBtns(t,c.id):doneBtns(t,c.id)}</td></tr>`}).join('')}</table></div>${unmatchedHTML(t)}${logHTML(t)}`;
   const sel=$('#dtF');sel.value=el._f||'';sel.onchange=()=>{el._f=sel.value;renderDetail();};
 }
 function openTask(id){
   editTaskId=id||null;const t=S.tasks.find(x=>x.id===id);
   $('#mdTaskT').textContent=t?'Sửa nhiệm vụ':'Giao nhiệm vụ / báo cáo';
-  $('#tTen').value=t?t.ten:'';$('#tCanCu').value=t?t.canCu:'';$('#tGhiChu').value=t?t.ghiChu:'';$('#tDrive').value=t?(t.drive||''):'';
+  $('#tTen').value=t?t.ten:'';$('#tCanCu').value=t?t.canCu:'';$('#tGhiChu').value=t?t.ghiChu:'';$('#tDrive').value=t?(t.drive||''):'';$('#tDriveMuon').value=t?(t.driveMuon||''):'';$('#tLinkNop').value=t?(t.linkNop||''):'';$('#tLinkMuon').value=t?(t.linkMuon||''):'';
   $('#tHan').value=t?t.han:nowLocal().slice(0,11)+'17:00';
   const sel=t?new Set(t.assign):new Set(S.cskv.filter(c=>c.active).map(c=>c.id));
   $('#tChk').innerHTML=S.cskv.filter(c=>c.active||sel.has(c.id)).map(c=>`<label><input type="checkbox" value="${c.id}" ${sel.has(c.id)?'checked':''}> ${esc(c.ten)} <span class="mut">– ${esc(c.diaBan)}</span></label>`).join('');
@@ -408,7 +488,7 @@ function saveTask(){
   const assign=[...document.querySelectorAll('#tChk input:checked')].map(i=>i.value);if(!assign.length){alert('Chọn ít nhất 1 CSKV.');return;}
   let t=S.tasks.find(x=>x.id===editTaskId);
   if(!t){t={id:uid(),rec:{},log:[],fileMap:{},files:[],created:new Date().toISOString()};S.tasks.push(t);addLog(t,{kieu:'Giao nhiệm vụ',txt:'Giao cho '+assign.length+' đ/c CSKV'});}
-  Object.assign(t,{ten,han,canCu:$('#tCanCu').value.trim(),ghiChu:$('#tGhiChu').value.trim(),drive:$('#tDrive').value.trim(),assign});
+  Object.assign(t,{ten,han,canCu:$('#tCanCu').value.trim(),ghiChu:$('#tGhiChu').value.trim(),drive:$('#tDrive').value.trim(),driveMuon:$('#tDriveMuon').value.trim(),linkNop:$('#tLinkNop').value.trim(),linkMuon:$('#tLinkMuon').value.trim(),assign});
   if(t.drive&&!folderId(t.drive))alert('Link thư mục Drive chưa đúng dạng …/folders/<mã>. Kiểm tra lại.');
   curTask=t.id;save();closeMd('mdTask');renderAll();
   document.querySelector('#nav [data-t=nv]').click();toast('Đã lưu nhiệm vụ');
@@ -430,7 +510,7 @@ function addLog(t,o){t.log.push({at:new Date().toISOString(),...o});}
 
 /* ===== TIN NHẮN ===== */
 function fill(tpl,t,c,extra={}){
-  const v={ten:c?c.ten:'',diaBan:c?(c.diaBan||c.chiTiet):'',nhiemVu:t.ten,canCu:t.canCu||'theo chỉ đạo',han:fmtDT(t.han),quaHan:quaHanTxt(t),hanNgay:fmtD(t.han),tinhTrang:chamInfo(t,c?c.id:null).tt,soNgay:chamInfo(t,c?c.id:null).so||'0 ngày',nguoiGui:S.settings.nguoiGui,donVi:S.settings.donVi,...extra};
+  const v={ten:c?c.ten:'',diaBan:c?(c.diaBan||c.chiTiet):'',nhiemVu:t.ten,canCu:t.canCu||'theo chỉ đạo',han:fmtDT(t.han),quaHan:quaHanTxt(t),hanNgay:fmtD(t.han),tinhTrang:chamInfo(t,c?c.id:null).tt,soNgay:chamInfo(t,c?c.id:null).so||'0 ngày',nguoiGui:S.settings.nguoiGui,donVi:S.settings.donVi,linkNop:t.linkNop||'[chưa có link nộp]',linkMuon:t.linkMuon||'[chưa có link nộp bổ sung]',...(c&&t.rec[c.id]?(r=>({nopLuc:fmtDT(r.nopLuc),lyDoNopLai:r.yeuCau?r.yeuCau.lyDo:'',hanNopLai:r.yeuCau&&r.yeuCau.han?'trước '+fmtDT(r.yeuCau.han):'sớm nhất'}))(t.rec[c.id]):{}),...extra};
   return tpl.replace(/\{(\w+)\}/g,(m,k)=>k in v?v[k]:m);
 }
 function openMsg(tid,cid,lan){
@@ -452,12 +532,13 @@ function openGroupMsg(tid){
 function openTongHop(tid){
   const t=S.tasks.find(x=>x.id===tid);const all=t.assign.map(cs).filter(Boolean);
   const nop=c=>t.rec[c.id]&&t.rec[c.id].nopLuc;
-  const da=all.filter(nop).sort((a,b)=>new Date(nop(a))-new Date(nop(b)));const chua=all.filter(c=>!nop(c));
-  const dsDa=da.map((c,i)=>{const ci=chamInfo(t,c.id);return`${i+1}. Đ/c ${c.ten} (${c.diaBan||c.chiTiet}) – nộp ${fmtDT(nop(c))}${ci.so?' – muộn '+ci.so:' – đúng hạn'}${t.rec[c.id].loi?' – ⚠ '+t.rec[c.id].loi:''}`;}).join('\n')||'(chưa có)';
+  const da=all.filter(c=>nop(c)&&!isRedo(t,c.id)).sort((a,b)=>new Date(nop(a))-new Date(nop(b)));const chua=all.filter(c=>!nop(c));const lai=all.filter(c=>isRedo(t,c.id));
+  const dsLai=lai.map((c,i)=>`${i+1}. @${c.ten} (nộp ${fmtDT(nop(c))}): ${t.rec[c.id].yeuCau.lyDo}${t.rec[c.id].yeuCau.han?' – hạn nộp lại '+fmtDT(t.rec[c.id].yeuCau.han):''}`).join('\n')||'(không có)';
+  const dsDa=da.map((c,i)=>{const ci=chamInfo(t,c.id);return`${i+1}. Đ/c ${c.ten} (${c.diaBan||c.chiTiet}) – nộp ${fmtDT(nop(c))}${ci.so?' – muộn '+ci.so:' – đúng hạn'}${t.rec[c.id].nopLai?' – nộp lại '+fmtDT(t.rec[c.id].nopLai):''}`;}).join('\n')||'(chưa có)';
   const dsChua=chua.map((c,i)=>{const ci=chamInfo(t,c.id),n=nhacCount(t,c.id);return`${i+1}. @${c.ten} (${c.diaBan||c.chiTiet})${ci.so?' – chậm '+ci.so:''}${n?` – đã nhắc ${n} lần`:''}${t.rec[c.id]&&t.rec[c.id].lyDo?' – 📝 có lý do: '+t.rec[c.id].lyDo:''}`;}).join('\n')||'(không còn – tất cả đã nộp)';
-  msgCtx={tid,cids:chua.map(c=>c.id),lan:'T',snap:{daNop:da.map(c=>({cid:c.id,nopLuc:nop(c)})),chuaNop:chua.map(c=>c.id)}};
-  $('#mdMsgT').textContent='Gửi tình hình nộp vào nhóm';$('#mdMsgSub').textContent=`Đã nộp ${da.length} – chưa nộp ${chua.length}. Danh sách này được lưu vào nhật ký; mỗi đ/c chưa nộp được tính thêm 1 lần nhắc.`;
-  $('#msgTx').value=fill(S.settings.tpl.mT,t,null,{dsDaNop:dsDa,dsChuaNop:dsChua,soDaNop:da.length,soChuaNop:chua.length,tongSo:all.length});
+  msgCtx={tid,cids:chua.map(c=>c.id),lan:'T',snap:{daNop:da.map(c=>({cid:c.id,nopLuc:nop(c)})),chuaNop:chua.map(c=>c.id),nopLai:lai.map(c=>c.id)}};
+  $('#mdMsgT').textContent='Gửi tình hình nộp vào nhóm';$('#mdMsgSub').textContent=`Đạt ${da.length} – phải nộp lại ${lai.length} – chưa nộp ${chua.length}. Danh sách này được lưu vào nhật ký; mỗi đ/c chưa nộp được tính thêm 1 lần nhắc.`;
+  $('#msgTx').value=fill(S.settings.tpl.mT,t,null,{dsDaNop:dsDa,dsChuaNop:dsChua,dsNopLai:dsLai,soNopLai:lai.length,soDaNop:da.length,soChuaNop:chua.length,tongSo:all.length});
   $('#btnPriv').disabled=true;showMsg(false);
 }
 function showMsg(sum){$('#sumOpt').classList.toggle('hide',!sum);$('#mdMsg').classList.remove('hide');}
@@ -472,33 +553,34 @@ function buildSummary(){
   const tasks=S.tasks.filter(t=>sc==='open'?t.assign.some(id=>cs(id)&&!(t.rec[id]&&t.rec[id].nopLuc))
     :sc==='month'?(d=>d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear())(new Date(t.han)):true)
     .sort((a,b)=>new Date(a.han)-new Date(b.han));
-  const tot={ok:0,late:0,over:0,wait:0},no={},items=[],L=[];
+  const tot={ok:0,late:0,over:0,wait:0,redo:0},no={},items=[],L=[];
   L.push('📊 TỔNG HỢP TIẾN ĐỘ NỘP BÁO CÁO CỦA CSKV',`(Cập nhật lúc ${fmtDT(now)})`,'');
   tasks.forEach((t,i)=>{
-    const all=t.assign.map(cs).filter(Boolean),g={ok:[],late:[],over:[],wait:[]};
+    const all=t.assign.map(cs).filter(Boolean),g={ok:[],late:[],over:[],wait:[],redo:[]};
     all.forEach(c=>{const s=stOf(t,c.id);g[s==='soon'?'wait':s].push(c);});
     Object.keys(g).forEach(k=>tot[k]+=g[k].length);
     g.over.sort((a,b)=>chamInfo(t,b.id).ngay-chamInfo(t,a.id).ngay).forEach(c=>no[c.id]=(no[c.id]||0)+1);
     g.ok.sort((a,b)=>new Date(nop(t,a))-new Date(nop(t,b)));
-    L.push(`${i+1}. 📄 ${t.ten.toUpperCase()}`,`Hạn: ${fmtDT(t.han)} (${chamInfo(t,null).tt.toLowerCase()}) – đã nộp ${g.ok.length+g.late.length}/${all.length}`);
+    L.push(`${i+1}. 📄 ${t.ten.toUpperCase()}`,`Hạn: ${fmtDT(t.han)} (${chamInfo(t,null).tt.toLowerCase()}) – đạt ${g.ok.length+g.late.length}/${all.length}${g.redo.length?`, phải nộp lại ${g.redo.length}`:''}`);
     const ovNo=g.over.filter(c=>!(t.rec[c.id]&&t.rec[c.id].lyDo)),ovLD=g.over.filter(c=>t.rec[c.id]&&t.rec[c.id].lyDo);
     if(ovNo.length)L.push(`🔴 Chậm, chưa nộp (${ovNo.length}): `+ovNo.map(c=>`@${c.ten} (chậm ${chamInfo(t,c.id).so})`).join(', '));
     if(ovLD.length)L.push(`📝 Chưa nộp, có lý do (${ovLD.length}): `+ovLD.map(c=>`${c.ten} (${t.rec[c.id].lyDo})`).join('; '));
     if(g.wait.length&&kemWait)L.push(`⏳ Chưa nộp, còn hạn (${g.wait.length}): `+g.wait.map(c=>c.ten).join(', '));
     if(g.late.length)L.push(`🟠 Nộp muộn (${g.late.length}): `+g.late.map(c=>`${c.ten} (muộn ${chamInfo(t,c.id).so}${t.rec[c.id].lyDo?' – lý do: '+t.rec[c.id].lyDo:''})`).join(', '));
+    if(g.redo.length){L.push(`🔁 Đã nộp nhưng chưa đạt – phải nộp lại (${g.redo.length}):`);g.redo.forEach(c=>{const y=t.rec[c.id].yeuCau;L.push(`- @${c.ten}: ${y.lyDo}${y.han?' (hạn nộp lại '+fmtDT(y.han)+')':''}`);});L.push(`👉 Nộp lại qua link: ${t.linkMuon||'[chưa có link nộp bổ sung]'}`);}
     const loi=[...g.ok,...g.late].filter(c=>t.rec[c.id].loi);
-    if(loi.length)L.push(`⚠️ Sai mẫu / cần bổ sung (${loi.length}): `+loi.map(c=>`@${c.ten} (${t.rec[c.id].loi})`).join('; '));
-    const okD=g.ok.filter(c=>!t.rec[c.id].loi);
-    if(okD.length&&kemOk)L.push(`✅ Nộp đúng hạn, đạt (${okD.length}): `+okD.map(c=>c.ten).join(', '));
-    if(!g.over.length&&!g.wait.length)L.push('🎉 Tất cả đã nộp.');
+    if(loi.length)L.push(`ℹ️ Lưu ý bổ sung (${loi.length}): `+loi.map(c=>`${c.ten} (${t.rec[c.id].loi})`).join('; '));
+    const okD=g.ok;
+    if(okD.length&&kemOk)L.push(`✅ Nộp đúng hạn, đạt (${okD.length}): `+okD.map(c=>c.ten+(t.rec[c.id].nopLai?' (đã nộp lại)':'')).join(', '));
+    if(!g.over.length&&!g.wait.length&&!g.redo.length)L.push('🎉 Tất cả đã nộp đạt.');
     L.push('');
-    items.push({tid:t.id,over:g.over.map(c=>c.id),daNop:[...g.ok,...g.late].map(c=>({cid:c.id,nopLuc:nop(t,c)})),chuaNop:[...g.over,...g.wait].map(c=>c.id)});
+    items.push({tid:t.id,over:g.over.map(c=>c.id),daNop:[...g.ok,...g.late].map(c=>({cid:c.id,nopLuc:nop(t,c)})),chuaNop:[...g.over,...g.wait].map(c=>c.id),nopLai:g.redo.map(c=>c.id)});
   });
   if(!tasks.length)L.push('Không có nhiệm vụ nào trong phạm vi chọn.','');
   const nhieu=Object.entries(no).filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]);
   if(nhieu.length)L.push('⚠️ Đ/c đang nợ từ 2 báo cáo trở lên: '+nhieu.map(([id,n])=>`@${cs(id).ten} (${n})`).join(', '),'');
-  L.push(`📌 Tổng cộng ${tasks.length} nhiệm vụ: đúng hạn ${tot.ok} – nộp muộn ${tot.late} – chậm chưa nộp ${tot.over} – chưa đến hạn ${tot.wait} lượt.`);
-  if(tot.over)L.push(`Đề nghị các đ/c có tên ở mục 🔴 và ⚠️ khẩn trương hoàn thành, gửi về ${S.settings.nguoiGui}.`);
+  L.push(`📌 Tổng cộng ${tasks.length} nhiệm vụ: đúng hạn ${tot.ok} – nộp muộn ${tot.late} – phải nộp lại ${tot.redo} – chậm chưa nộp ${tot.over} – chưa đến hạn ${tot.wait} lượt.`);
+  if(tot.over||tot.redo)L.push(`Đề nghị các đ/c có tên ở mục 🔴 và 🔁 khẩn trương hoàn thành, gửi về ${S.settings.nguoiGui}.`);
   msgCtx={lan:'S',items};
   $('#msgTx').value=L.join('\n');
   $('#mdMsgSub').textContent=`Đ/c ở mục 🔴 được tính thêm 1 lần nhắc; danh sách lưu vào nhật ký từng nhiệm vụ. Tin dài ${$('#msgTx').value.length} ký tự.`;
@@ -507,7 +589,7 @@ function logHTML(t){
   if(!t.log.length)return'';
   const nm=ids=>ids.map(id=>{const c=cs(id);return c?c.ten:'?';}).join(', ');
   return`<details><summary>🕓 Nhật ký nộp bài / gửi nhóm (${t.log.length})</summary><div class="tw"><table><tr><th>Thời gian</th><th>Loại</th><th>Nội dung</th></tr>${[...t.log].reverse().map(l=>`<tr><td style="white-space:nowrap">${fmtDT(l.at)}</td><td>${esc(l.kieu)}</td><td>${l.daNop||l.chuaNop?
-    (l.daNop?`<div class="ok-tx">✅ Đã nộp (${l.daNop.length}): ${l.daNop.map(x=>esc((cs(x.cid)||{}).ten)+' – '+fmtDT(x.nopLuc)).join('; ')||'—'}</div>`:'')+`<div class="bad-tx">❌ Chưa nộp (${l.chuaNop.length}): ${esc(nm(l.chuaNop))||'—'}</div>`:esc(l.txt)}</td></tr>`).join('')}</table></div></details>`;
+    (l.daNop?`<div class="ok-tx">✅ Đã nộp (${l.daNop.length}): ${l.daNop.map(x=>esc((cs(x.cid)||{}).ten)+' – '+fmtDT(x.nopLuc)).join('; ')||'—'}</div>`:'')+`<div class="bad-tx">❌ Chưa nộp (${l.chuaNop.length}): ${esc(nm(l.chuaNop))||'—'}</div>`+(l.nopLai&&l.nopLai.length?`<div style="color:#9a4300">🔁 Phải nộp lại (${l.nopLai.length}): ${esc(nm(l.nopLai))}</div>`:''):esc(l.txt)}</td></tr>`).join('')}</table></div></details>`;
 }
 function unmatchedHTML(t){
   const um=t.files.filter(f=>!f.cid&&t.fileMap[f.id]!=='x');if(!um.length)return'';
@@ -533,9 +615,14 @@ function matchFile(t,f){
 function applyFiles(t){
   let moi=0;const first={};
   t.files.forEach(f=>{f.cid=matchFile(t,f);if(f.cid&&(!first[f.cid]||f.created<first[f.cid].created))first[f.cid]=f;});
-  Object.entries(first).forEach(([cid,f])=>{const r=rec(t,cid);if(r.nopLuc&&r.nguon!=='drive')return;
-    if(!r.nopLuc){moi++;addLog(t,{kieu:'Nộp qua Drive',txt:`Đ/c ${(cs(cid)||{}).ten} nộp lúc ${fmtDT(f.created)}: ${f.name}`});}
-    r.nopLuc=f.created;r.nguon='drive';r.file={name:f.name,url:f.url};});
+  Object.entries(first).forEach(([cid,f])=>{const r=rec(t,cid);
+    if(!(r.nopLuc&&r.nguon!=='drive')){
+      if(!r.nopLuc){moi++;addLog(t,{kieu:'Nộp qua Drive',txt:`Đ/c ${(cs(cid)||{}).ten} nộp lúc ${fmtDT(f.created)}: ${f.name}`});}
+      r.nopLuc=f.created;r.nguon='drive';r.file={name:f.name,url:f.url};}
+    if(r.yeuCau&&(!r.nopLai||r.nguonLai==='drive')){
+      const sau=t.files.filter(x=>x.cid===cid&&x.created>r.yeuCau.at).sort((a,b)=>a.created<b.created?-1:1)[0];
+      if(sau&&r.nopLai!==sau.created){if(!r.nopLai){moi++;addLog(t,{kieu:'Nộp lại qua Drive',txt:`Đ/c ${(cs(cid)||{}).ten} nộp lại lúc ${fmtDT(sau.created)}: ${sau.name}`});}
+        r.nopLai=sau.created;r.nguonLai='drive';r.fileLai={name:sau.name,url:sau.url};}}});
   return moi;
 }
 function jsonp(url){return new Promise((res,rej)=>{const cb='__gs'+Date.now();const s=document.createElement('script');
@@ -546,10 +633,10 @@ function callGS(ids){const st=S.settings;return jsonp(st.script.trim()+'?token='
 let syncing=false;
 async function syncDrive(silent){
   const st=S.settings;if(!st.script){if(!silent){alert('Chưa cài kết nối Google Drive. Vào tab ⚙️ Cài đặt.');}return;}
-  const tasks=S.tasks.filter(t=>folderId(t.drive));if(!tasks.length){if(!silent)toast('Chưa có nhiệm vụ nào gắn thư mục Drive');return;}
+  const fids=t=>[folderId(t.drive),folderId(t.driveMuon)].filter(Boolean);const tasks=S.tasks.filter(t=>fids(t).length);if(!tasks.length){if(!silent)toast('Chưa có nhiệm vụ nào gắn thư mục Drive');return;}
   if(syncing)return;syncing=true;setSync('⏳ Đang đồng bộ…');
-  try{const d=await callGS([...new Set(tasks.map(t=>folderId(t.drive)))]);if(d.error)throw new Error(d.error);
-    let moi=0;tasks.forEach(t=>{const fo=d.folders[folderId(t.drive)];if(!fo)return;if(fo.error){t.driveErr=fo.error;return;}t.driveErr='';t.files=fo.files;moi+=applyFiles(t);});
+  try{const d=await callGS([...new Set(tasks.flatMap(fids))]);if(d.error)throw new Error(d.error);
+    let moi=0;tasks.forEach(t=>{const fos=fids(t).map(id=>d.folders[id]).filter(Boolean);const er=fos.find(x=>x.error);if(er){t.driveErr=er.error;return;}t.driveErr='';t.files=fos.flatMap(x=>x.files);moi+=applyFiles(t);});
     st.lastSync=d.at||new Date().toISOString();save();renderAll();if(moi||!silent)toast(`Đồng bộ xong: ${moi} lượt nộp mới`);
   }catch(e){setSync('⚠️ Lỗi đồng bộ');if(!silent)alert('Lỗi đồng bộ Google Drive: '+e.message);}
   syncing=false;setSync();
@@ -606,15 +693,17 @@ async function sendMsg(mode){
   const at=new Date().toISOString();
   if(msgCtx.lan==='S'){msgCtx.items.forEach(it=>{const t=S.tasks.find(x=>x.id===it.tid);if(!t)return;
     it.over.forEach(cid=>{const r=rec(t,cid);r.nhac.push({lan:Math.min(r.nhac.length+1,3),at,kieu:'nhóm'});});
-    addLog(t,{kieu:'Gửi tổng hợp chung',daNop:it.daNop,chuaNop:it.chuaNop});});}
+    addLog(t,{kieu:'Gửi tổng hợp chung',daNop:it.daNop,chuaNop:it.chuaNop,nopLai:it.nopLai});});}
   else{
   const t=S.tasks.find(x=>x.id===msgCtx.tid);
   const grp=msgCtx.lan==='G'||msgCtx.lan==='T';
+  if(msgCtx.lan==='R'){const r=rec(t,msgCtx.cids[0]);(r.nhacLai=r.nhacLai||[]).push({at,kieu:mode==='priv'?'riêng':'nhóm'});addLog(t,{kieu:'Gửi YC nộp lại',txt:`Gửi ${mode==='priv'?'riêng':'qua nhóm'} đ/c ${cs(msgCtx.cids[0]).ten}: ${r.yeuCau?r.yeuCau.lyDo:''}`});}
+  else{
   msgCtx.cids.forEach(cid=>{const r=rec(t,cid);const lan=grp?Math.min(r.nhac.length+1,3):msgCtx.lan;r.nhac.push({lan,at,kieu:grp?'nhóm':(mode==='priv'?'riêng':'nhóm')});});
   if(msgCtx.lan==='T')addLog(t,{kieu:'Gửi tình hình nộp',...msgCtx.snap});
   else if(msgCtx.lan==='G')addLog(t,{kieu:'Nhắc chung nhóm',chuaNop:msgCtx.cids});
   else addLog(t,{kieu:'Nhắc lần '+msgCtx.lan,txt:`Nhắc ${mode==='priv'?'riêng':'qua nhóm'} đ/c ${cs(msgCtx.cids[0]).ten}`});
-  }
+  }}
   save();
   if(mode==='group'){const z=S.settings.zalo.trim();window.open(z||'https://chat.zalo.me','_blank');if(!z)toast('Đã sao chép. Chưa cài link nhóm Zalo – mở Zalo Web');else toast('Đã sao chép – dán vào nhóm Zalo');}
   else if(mode==='priv'){window.open('https://zalo.me/'+msgCtx.phone.replace(/\D/g,''),'_blank');toast('Đã sao chép – dán vào khung chat');}
@@ -630,14 +719,14 @@ function pickMonth(){const v=$('#soThang').value;if(!v){$('#soTu').value='';$('#
 function soData(){
   const tu=$('#soTu').value?new Date($('#soTu').value+'T00:00'):null,den=$('#soDen').value?new Date($('#soDen').value+'T23:59:59'):null;
   const tasks=S.tasks.filter(t=>{const h=new Date(t.han);return(!tu||h>=tu)&&(!den||h<=den);});
-  return S.cskv.map(c=>{const o={c,tong:0,ok:0,late:0,over:0,wait:0,nhac:0,ngay:0,loi:0,ld:0,chap:0,ds:[]};
-    tasks.forEach(t=>{if(!t.assign.includes(c.id))return;const s=stOf(t,c.id);o.tong++;if(s==='ok')o.ok++;else if(s==='late')o.late++;else if(s==='over')o.over++;else o.wait++;o.nhac+=nhacCount(t,c.id);if(t.rec[c.id]&&t.rec[c.id].loi)o.loi++;const rr=t.rec[c.id]||{};if(rr.lyDo)o.ld++;if(rr.chap&&(s==='late'||s==='over')){o.chap++;if(s==='late')o.late--;else o.over--;o.ok++;o.ds.push([t,s]);return;}o.ngay+=chamInfo(t,c.id).ngay;o.ds.push([t,s]);});
+  return S.cskv.map(c=>{const o={c,tong:0,ok:0,late:0,over:0,wait:0,nhac:0,ngay:0,loi:0,ld:0,chap:0,yc:0,redo:0,ds:[]};
+    tasks.forEach(t=>{if(!t.assign.includes(c.id))return;const s=stOf(t,c.id);o.tong++;if(s==='ok')o.ok++;else if(s==='late')o.late++;else if(s==='over')o.over++;else if(s==='redo')o.redo++;else o.wait++;if(t.rec[c.id]&&t.rec[c.id].ycCount)o.yc+=t.rec[c.id].ycCount;o.nhac+=nhacCount(t,c.id);if(t.rec[c.id]&&t.rec[c.id].loi)o.loi++;const rr=t.rec[c.id]||{};if(rr.lyDo)o.ld++;if(rr.chap&&(s==='late'||s==='over')){o.chap++;if(s==='late')o.late--;else o.over--;o.ok++;o.ds.push([t,s]);return;}o.ngay+=chamInfo(t,c.id).ngay;o.ds.push([t,s]);});
     return o;}).filter(o=>o.tong||o.c.active);
 }
 function renderSo(){
   const d=soData().sort((a,b)=>(b.late+b.over)-(a.late+a.over)||b.nhac-a.nhac);
-  $('#soTable').innerHTML=`<table><tr><th>TT</th><th>CSKV</th><th>Địa bàn</th><th>Tổng NV</th><th>Đúng hạn</th><th>Nộp muộn</th><th>Đang quá hạn</th><th>Chưa đến hạn</th><th>Tổng ngày chậm</th><th>Sai mẫu / bổ sung</th><th>Có lý do giải trình</th><th>Tổng lượt bị nhắc</th><th>Tỷ lệ đúng hạn</th></tr>
-  ${d.map((o,i)=>{const xong=o.ok+o.late+o.over;return`<tr><td>${i+1}</td><td><a href="#" onclick="showHist('${o.c.id}');return false">${esc(o.c.ten)}</a></td><td>${esc(o.c.diaBan)}</td><td>${o.tong}</td><td>${o.ok}</td><td>${o.late?`<span class="tag t-late">${o.late}</span>`:0}</td><td>${o.over?`<span class="tag t-over">${o.over}</span>`:0}</td><td>${o.wait}</td><td>${o.ngay}</td><td>${o.loi?`<span class="tag t-over">${o.loi}</span>`:0}</td><td>${o.ld?`<span class="tag t-wait">${o.ld}${o.chap?' ('+o.chap+' chấp nhận)':''}</span>`:0}</td><td>${o.nhac}</td><td>${xong?Math.round(o.ok/xong*100)+'%':'—'}</td></tr>`}).join('')}</table>`;
+  $('#soTable').innerHTML=`<table><tr><th>TT</th><th>CSKV</th><th>Địa bàn</th><th>Tổng NV</th><th>Đúng hạn</th><th>Nộp muộn</th><th>Đang quá hạn</th><th>Chưa đến hạn</th><th>Tổng ngày chậm</th><th>Bị YC nộp lại (đang chờ)</th><th>Có lý do giải trình</th><th>Tổng lượt bị nhắc</th><th>Tỷ lệ đúng hạn</th></tr>
+  ${d.map((o,i)=>{const xong=o.ok+o.late+o.over+o.redo;return`<tr><td>${i+1}</td><td><a href="#" onclick="showHist('${o.c.id}');return false">${esc(o.c.ten)}</a></td><td>${esc(o.c.diaBan)}</td><td>${o.tong}</td><td>${o.ok}</td><td>${o.late?`<span class="tag t-late">${o.late}</span>`:0}</td><td>${o.over?`<span class="tag t-over">${o.over}</span>`:0}</td><td>${o.wait}</td><td>${o.ngay}</td><td>${o.yc?`<span class="tag t-redo">${o.yc}${o.redo?' ('+o.redo+' chờ)':''}</span>`:0}</td><td>${o.ld?`<span class="tag t-wait">${o.ld}${o.chap?' ('+o.chap+' chấp nhận)':''}</span>`:0}</td><td>${o.nhac}</td><td>${xong?Math.round(o.ok/xong*100)+'%':'—'}</td></tr>`}).join('')}</table>`;
 }
 function showHist(cid){
   const o=soData().find(x=>x.c.id===cid);$('#mdHistT').textContent='Chi tiết: Đ/c '+o.c.ten+' – '+o.c.diaBan;
@@ -649,11 +738,11 @@ function exportSoExcel(){
   if(!needX())return;const wb=XLSX.utils.book_new();
   const d=soData();
   const a=[[S.settings.donVi.toUpperCase()],['SỔ THEO DÕI TIẾN ĐỘ, CHẬM MUỘN CỦA CSKV'],[`Từ ${$('#soTu').value||'đầu'} đến ${$('#soDen').value||'nay'} – xuất lúc ${fmtDT(new Date())}`],[],
-    ['TT','Họ tên CSKV','Địa bàn','Tổng NV','Đúng hạn','Nộp muộn','Đang quá hạn','Chưa đến hạn','Tổng số ngày chậm','Sai mẫu / bổ sung','Có lý do giải trình','Lý do được chấp nhận (không tính chậm)','Tổng lượt bị nhắc','Tỷ lệ đúng hạn (%)']];
-  d.forEach((o,i)=>{const x=o.ok+o.late+o.over;a.push([i+1,o.c.ten,o.c.diaBan,o.tong,o.ok,o.late,o.over,o.wait,o.ngay,o.loi,o.ld,o.chap,o.nhac,x?Math.round(o.ok/x*100):''])});
+    ['TT','Họ tên CSKV','Địa bàn','Tổng NV','Đúng hạn','Nộp muộn','Đang quá hạn','Chưa đến hạn','Tổng số ngày chậm','Số lần bị YC nộp lại','Đang chờ nộp lại','Có lý do giải trình','Lý do được chấp nhận (không tính chậm)','Tổng lượt bị nhắc','Tỷ lệ đúng hạn (%)']];
+  d.forEach((o,i)=>{const x=o.ok+o.late+o.over+o.redo;a.push([i+1,o.c.ten,o.c.diaBan,o.tong,o.ok,o.late,o.over,o.wait,o.ngay,o.yc,o.redo,o.ld,o.chap,o.nhac,x?Math.round(o.ok/x*100):''])});
   const ws=XLSX.utils.aoa_to_sheet(a);ws['!cols']=[{wch:5},{wch:24},{wch:20},{wch:9},{wch:9},{wch:9},{wch:12},{wch:12},{wch:14},{wch:14},{wch:14}];XLSX.utils.book_append_sheet(wb,ws,'Tổng hợp');
-  const b=[['TT','Nhiệm vụ','Căn cứ','Hạn','CSKV','Địa bàn','Trạng thái','Nộp lúc','Nguồn ghi nhận','Chậm / còn','Số ngày chậm','Lỗi / bổ sung','Lý do giải trình','Chấp nhận lý do','Số lần nhắc','Chi tiết nhắc']];let k=0;
-  d.forEach(o=>o.ds.forEach(([t,s])=>{const r=t.rec[o.c.id]||{};b.push([++k,t.ten,t.canCu,fmtDT(t.han),o.c.ten,o.c.diaBan,ST[s][0],fmtDT(r.nopLuc),r.nguon==='drive'?'Google Drive: '+((r.file||{}).name||''):(r.nopLuc?'Ghi tay':''),chamInfo(t,o.c.id).txt,chamInfo(t,o.c.id).ngay,r.loi||'',r.lyDo||'',r.chap?'Có':'',(r.nhac||[]).length,(r.nhac||[]).map(n=>'Lần '+n.lan+': '+fmtDT(n.at)).join('; ')])}));
+  const b=[['TT','Nhiệm vụ','Căn cứ','Hạn','CSKV','Địa bàn','Trạng thái','Nộp lúc','Nguồn ghi nhận','Chậm / còn','Số ngày chậm','YC nộp lại (lý do)','Nộp lại lúc','Lưu ý','Lý do giải trình','Chấp nhận lý do','Số lần nhắc','Chi tiết nhắc']];let k=0;
+  d.forEach(o=>o.ds.forEach(([t,s])=>{const r=t.rec[o.c.id]||{};b.push([++k,t.ten,t.canCu,fmtDT(t.han),o.c.ten,o.c.diaBan,ST[s][0],fmtDT(r.nopLuc),r.nguon==='drive'?'Google Drive: '+((r.file||{}).name||''):(r.nopLuc?'Ghi tay':''),chamInfo(t,o.c.id).txt,chamInfo(t,o.c.id).ngay,r.yeuCau?r.yeuCau.lyDo:'',fmtDT(r.nopLai),r.loi||'',r.lyDo||'',r.chap?'Có':'',(r.nhac||[]).length,(r.nhac||[]).map(n=>'Lần '+n.lan+': '+fmtDT(n.at)).join('; ')])}));
   const ws2=XLSX.utils.aoa_to_sheet(b);ws2['!cols']=[{wch:5},{wch:36},{wch:26},{wch:17},{wch:22},{wch:18},{wch:13},{wch:17},{wch:10},{wch:50}];XLSX.utils.book_append_sheet(wb,ws2,'Chi tiết');
   const lg=[['Thời gian','Nhiệm vụ','Loại','Nội dung']];
   const tu=$('#soTu').value?new Date($('#soTu').value+'T00:00'):null,den=$('#soDen').value?new Date($('#soDen').value+'T23:59:59'):null;
@@ -698,9 +787,9 @@ function exportDSExcel(){
 }
 
 /* ===== CÀI ĐẶT ===== */
-function fillSettings(){const s=S.settings;$('#sDonVi').value=s.donVi;$('#sNguoiGui').value=s.nguoiGui;$('#sZalo').value=s.zalo;['m1','m2','m3','mG','mT'].forEach(k=>$('#'+k).value=s.tpl[k]);$('#sScript').value=s.script||'';$('#sToken').value=s.token||'';$('#sAuto').value=String(s.auto||0);setSync();}
-function saveSettings(){const s=S.settings;s.donVi=$('#sDonVi').value.trim();s.nguoiGui=$('#sNguoiGui').value.trim();s.zalo=$('#sZalo').value.trim();['m1','m2','m3','mG','mT'].forEach(k=>s.tpl[k]=$('#'+k).value);s.script=$('#sScript').value.trim();s.token=$('#sToken').value.trim()||s.token;s.auto=+$('#sAuto').value;save();renderAll();toast('Đã lưu cài đặt');}
-function resetTpl(){if(!confirm('Khôi phục 5 mẫu tin mặc định?'))return;S.settings.tpl={...DEF_TPL};save();fillSettings();toast('Đã khôi phục');}
+function fillSettings(){const s=S.settings;$('#sDonVi').value=s.donVi;$('#sNguoiGui').value=s.nguoiGui;$('#sZalo').value=s.zalo;['m1','m2','m3','mG','mT','mR'].forEach(k=>$('#'+k).value=s.tpl[k]);$('#sScript').value=s.script||'';$('#sToken').value=s.token||'';$('#sAuto').value=String(s.auto||0);setSync();}
+function saveSettings(){const s=S.settings;s.donVi=$('#sDonVi').value.trim();s.nguoiGui=$('#sNguoiGui').value.trim();s.zalo=$('#sZalo').value.trim();['m1','m2','m3','mG','mT','mR'].forEach(k=>s.tpl[k]=$('#'+k).value);s.script=$('#sScript').value.trim();s.token=$('#sToken').value.trim()||s.token;s.auto=+$('#sAuto').value;save();renderAll();toast('Đã lưu cài đặt');}
+function resetTpl(){if(!confirm('Khôi phục 6 mẫu tin mặc định?'))return;S.settings.tpl={...DEF_TPL};save();fillSettings();toast('Đã khôi phục');}
 
 /* ===== SAO LƯU ===== */
 function exportJSON(){const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`SaoLuu_SoTheoDoiCSKV_${new Date().toISOString().slice(0,10)}.json`;a.click();}
