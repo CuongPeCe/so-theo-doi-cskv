@@ -312,6 +312,7 @@ function load(){
   if(!S.settings.token){S.settings.token=Math.random().toString(36).slice(2,10)+Math.random().toString(36).slice(2,10);save();}
   S.tasks.forEach(t=>{t.log=t.log||[];t.fileMap=t.fileMap||{};t.files=t.files||[];});
   applyPreset();
+  if(!S.settings.gopNhac1){const bo=gopNhacTrungNgay();S.settings.gopNhac1=true;save();if(bo)setTimeout(()=>toast(`Đã gộp ${bo} lượt nhắc trùng ngày`),800);}
 }
 function applyPreset(){
   if(!PRESET)return;
@@ -377,6 +378,15 @@ function chamInfo(task,cid){
   return{ngay:Math.max(dd,0),so,txt:(r.nopLuc?'Muộn ':'Chậm ')+so,tt:'Đã quá hạn '+so};
 }
 function chamTag(task,cid){const c=chamInfo(task,cid);if(cid&&stOf(task,cid)==='redo')return`<span class="tag t-redo">${c.txt}</span>`;const cls=c.so?(task.rec[cid]&&task.rec[cid].nopLuc?'t-late':'t-over'):(c.txt==='Đúng hạn'?'t-ok':(c.txt==='Hạn hôm nay'?'t-soon':'t-wait'));return`<span class="tag ${cls}">${c.txt}</span>`;}
+const sameDay=(a,b)=>new Date(a).toDateString()===new Date(b).toDateString();
+/* Nhắc nhóm: trong cùng 1 ngày chỉ tính 1 lượt */
+function pushNhacNhom(r,at){if(r.nhac.some(n=>sameDay(n.at,at)))return false;r.nhac.push({lan:Math.min(r.nhac.length+1,3),at,kieu:'nhóm'});return true;}
+function renumNhac(r){(r.nhac||[]).sort((a,b)=>a.at<b.at?-1:1).forEach((n,i)=>n.lan=Math.min(i+1,3));}
+function gopNhacTrungNgay(){let bo=0;S.tasks.forEach(t=>Object.values(t.rec).forEach(r=>{if(!r.nhac||r.nhac.length<2)return;
+  r.nhac.sort((a,b)=>a.at<b.at?-1:1);const k=[];r.nhac.forEach(n=>{if(k.some(x=>sameDay(x.at,n.at)))bo++;else k.push(n);});r.nhac=k;renumNhac(r);}));return bo;}
+function delNhac(tid,cid,i){const t=S.tasks.find(x=>x.id===tid),r=t.rec[cid],n=r.nhac[i];
+  if(!confirm(`Xoá lượt nhắc lần ${n.lan} (${fmtDT(n.at)}) của đ/c ${cs(cid).ten}?`))return;
+  r.nhac.splice(i,1);renumNhac(r);addLog(t,{kieu:'Xoá lượt nhắc',txt:`Đ/c ${cs(cid).ten}: xoá lượt nhắc ${fmtDT(n.at)}`});save();renderAll();toast('Đã xoá lượt nhắc');}
 function nhacCount(task,cid){return((task.rec[cid]||{}).nhac||[]).length;}
 
 /* ===== TABS ===== */
@@ -470,7 +480,7 @@ function renderDetail(){
    ${t.assign.map(cid=>cs(cid)).filter(Boolean).filter(c=>{const v=el._f||'',s=stOf(t,c.id);return!v||(v==='redo'?s==='redo':v==='ld'?!!(t.rec[c.id]&&t.rec[c.id].lyDo):v==='loi'?!!(t.rec[c.id]&&t.rec[c.id].loi):v==='chua'?['over','soon','wait'].includes(s):s===v);}).map((c,i)=>{const r=t.rec[c.id]||{};const s=stOf(t,c.id);
      return`<tr><td>${i+1}</td><td>${esc(c.ten)}</td><td>${esc(c.diaBan||c.chiTiet)}</td><td>${fmtD(t.han)}</td><td>${chamTag(t,c.id)}</td><td>${tagSt(s)}${ycTag(t,c.id)}${ldTag(t,c.id)}</td>
      <td>${r.nopLuc?fmtDT(r.nopLuc)+(r.nguon==='drive'?` <a href="${esc(r.file&&r.file.url)}" target="_blank" title="${esc(r.file&&r.file.name)}">📁</a>`:'')+` <button class="btn s" title="Huỷ ghi nhận nộp" onclick="unNop('${t.id}','${c.id}')">↺</button>`+(r.nopLai?`<div class="mut">Nộp lại: ${fmtDT(r.nopLai)}${r.nguonLai==='drive'&&r.fileLai?` <a href="${esc(r.fileLai.url)}" target="_blank" title="${esc(r.fileLai.name)}">📁</a>`:''}</div>`:''):''}</td>
-     <td class="mut">${(r.nhac||[]).map(n=>`Lần ${n.lan}: ${fmtDT(n.at)}`).join('<br>')||'—'}</td>
+     <td class="mut" style="white-space:nowrap">${(r.nhac||[]).map((n,k)=>`Lần ${n.lan}: ${fmtDT(n.at)} <a href="#" title="Xoá lượt nhắc này" style="color:var(--bad);text-decoration:none" onclick="delNhac('${t.id}','${c.id}',${k});return false">✕</a>`).join('<br>')||'—'}</td>
      <td>${!r.nopLuc?nhacBtns(t,c.id):s==='redo'?redoBtns(t,c.id):doneBtns(t,c.id)}</td></tr>`}).join('')}</table></div>${unmatchedHTML(t)}${logHTML(t)}`;
   const sel=$('#dtF');sel.value=el._f||'';sel.onchange=()=>{el._f=sel.value;renderDetail();};
 }
@@ -538,7 +548,7 @@ function openTongHop(tid){
   const dsDa=da.map((c,i)=>{const ci=chamInfo(t,c.id);return`${i+1}. Đ/c ${c.ten} (${c.diaBan||c.chiTiet}) – nộp ${fmtDT(nop(c))}${ci.so?' – muộn '+ci.so:' – đúng hạn'}${t.rec[c.id].nopLai?' – nộp lại '+fmtDT(t.rec[c.id].nopLai):''}`;}).join('\n')||'(chưa có)';
   const dsChua=chua.map((c,i)=>{const ci=chamInfo(t,c.id),n=nhacCount(t,c.id);return`${i+1}. @${c.ten} (${c.diaBan||c.chiTiet})${ci.so?' – chậm '+ci.so:''}${n?` – đã nhắc ${n} lần`:''}${t.rec[c.id]&&t.rec[c.id].lyDo?' – 📝 có lý do: '+t.rec[c.id].lyDo:''}`;}).join('\n')||'(không còn – tất cả đã nộp)';
   msgCtx={tid,cids:chua.map(c=>c.id),lan:'T',snap:{daNop:da.map(c=>({cid:c.id,nopLuc:nop(c)})),chuaNop:chua.map(c=>c.id),nopLai:lai.map(c=>c.id)}};
-  $('#mdMsgT').textContent='Gửi tình hình nộp vào nhóm';$('#mdMsgSub').textContent=`Đạt ${da.length} – phải nộp lại ${lai.length} – chưa nộp ${chua.length}. Danh sách này được lưu vào nhật ký; mỗi đ/c chưa nộp được tính thêm 1 lần nhắc.`;
+  $('#mdMsgT').textContent='Gửi tình hình nộp vào nhóm';$('#mdMsgSub').textContent=`Đạt ${da.length} – phải nộp lại ${lai.length} – chưa nộp ${chua.length}. Danh sách này được lưu vào nhật ký; mỗi đ/c chưa nộp được tính thêm 1 lần nhắc (trong ngày chỉ tính 1 lần).`;
   $('#msgTx').value=fill(S.settings.tpl.mT,t,null,{dsDaNop:dsDa,dsChuaNop:dsChua,dsNopLai:dsLai,soNopLai:lai.length,soDaNop:da.length,soChuaNop:chua.length,tongSo:all.length});
   $('#btnPriv').disabled=true;showMsg(false);
 }
@@ -693,14 +703,14 @@ async function sendMsg(mode){
   if(!ok){toast('Không sao chép được – hãy bôi đen và Ctrl+C');return;}
   const at=new Date().toISOString();
   if(msgCtx.lan==='S'){msgCtx.items.forEach(it=>{const t=S.tasks.find(x=>x.id===it.tid);if(!t)return;
-    it.over.forEach(cid=>{const r=rec(t,cid);r.nhac.push({lan:Math.min(r.nhac.length+1,3),at,kieu:'nhóm'});});
+    it.over.forEach(cid=>pushNhacNhom(rec(t,cid),at));
     addLog(t,{kieu:'Gửi tổng hợp chung',daNop:it.daNop,chuaNop:it.chuaNop,nopLai:it.nopLai});});}
   else{
   const t=S.tasks.find(x=>x.id===msgCtx.tid);
   const grp=msgCtx.lan==='G'||msgCtx.lan==='T';
   if(msgCtx.lan==='R'){const r=rec(t,msgCtx.cids[0]);(r.nhacLai=r.nhacLai||[]).push({at,kieu:mode==='priv'?'riêng':'nhóm'});addLog(t,{kieu:'Gửi YC nộp lại',txt:`Gửi ${mode==='priv'?'riêng':'qua nhóm'} đ/c ${cs(msgCtx.cids[0]).ten}: ${r.yeuCau?r.yeuCau.lyDo:''}`});}
   else{
-  msgCtx.cids.forEach(cid=>{const r=rec(t,cid);const lan=grp?Math.min(r.nhac.length+1,3):msgCtx.lan;r.nhac.push({lan,at,kieu:grp?'nhóm':(mode==='priv'?'riêng':'nhóm')});});
+  msgCtx.cids.forEach(cid=>{const r=rec(t,cid);if(grp){pushNhacNhom(r,at);return;}r.nhac.push({lan:msgCtx.lan,at,kieu:mode==='priv'?'riêng':'nhóm'});renumNhac(r);});
   if(msgCtx.lan==='T')addLog(t,{kieu:'Gửi tình hình nộp',...msgCtx.snap});
   else if(msgCtx.lan==='G')addLog(t,{kieu:'Nhắc chung nhóm',chuaNop:msgCtx.cids});
   else addLog(t,{kieu:'Nhắc lần '+msgCtx.lan,txt:`Nhắc ${mode==='priv'?'riêng':'qua nhóm'} đ/c ${cs(msgCtx.cids[0]).ten}`});
