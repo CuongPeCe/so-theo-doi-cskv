@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sổ theo dõi CSKV</title>
-<meta name="theme-color" content="#b3261e">
+<meta name="theme-color" content="#2b6cdf">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -30,7 +30,7 @@ main{padding:16px;max-width:1400px;margin:0 auto}
 .btn.s{padding:3px 8px;font-size:12.5px}
 .btn.n1{background:var(--warnb);border-color:#f0cf8f;color:var(--warn)}
 .btn.n2{background:#ffe2cc;border-color:#f3b07e;color:#9a4300}
-.btn.n3{background:var(--badb);border-color:#f2b1aa;color:var(--bad)}
+.btn.n3{background:var(--badb);border-color:#cfe0f6;color:var(--bad)}
 .btn.g{background:var(--okb);border-color:#9fd3ad;color:var(--ok)}
 input,select,textarea{font:inherit;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:#fff;color:var(--tx)}
 textarea{width:100%;min-height:90px}
@@ -65,7 +65,8 @@ td.ed{cursor:text}
 td .row{flex-wrap:wrap;gap:4px;min-width:200px}
 .grid2>div{min-width:0}
 .t-redo,.t-ld,.t-note{border-radius:8px}
-td:has(div.t-redo),td:has(div.t-note){min-width:280px}
+td:has(div.t-redo),td:has(div.t-note){min-width:240px}
+#taskDetail td:last-child{min-width:230px}
 td:has(.t-ld),td:has(.t-over+div),td:has(div.t-over){min-width:190px}
 details summary{cursor:pointer;font-weight:600;margin:6px 0}
 .srch{position:relative}.srch input{width:260px;max-width:60vw;border:0}
@@ -82,15 +83,62 @@ nav{flex-wrap:nowrap;overflow-x:auto;padding:6px 8px;-webkit-overflow-scrolling:
 pre.code{background:#1d2733;color:#e8eef5;padding:10px;border-radius:8px;overflow:auto;font-size:12px;max-height:300px}
 .ok-tx{color:var(--ok)}.bad-tx{color:var(--bad)}
 td.ed:focus{outline:2px solid var(--info);background:#fff}
+
+/* ===== Giao diện xanh nhẹ v12 ===== */
+:root{--bg:#f2f6fb;--card:#fff;--tx:#1b2a3a;--mut:#5f6f82;--bd:#dfe8f3;--pri:#2b6cdf;--pri2:#1f56b8;--acc:#e6f0fd;--info:#2b6cdf;--infob:#e6f0fd}
+body{background:var(--bg);font-family:"Segoe UI",Inter,Roboto,Arial,sans-serif}
+header{background:linear-gradient(120deg,#eef5ff 0%,#dbeafd 100%);color:#16365f;border-bottom:1px solid #cfe0f6;padding:12px 20px}
+header h1{font-size:18px;letter-spacing:.2px;color:#16365f}header small{color:#4a6a92;opacity:1}
+header .btn.s{background:#fff;border-color:#cfe0f6}header .btn.s.p{background:var(--pri);border-color:var(--pri);color:#fff}header .btn.s.p:hover{background:var(--pri2)}
+.srch input{border:1px solid #cfe0f6!important;border-radius:999px!important;padding:7px 14px!important;background:#fff}
+nav{background:#fff;border-bottom:1px solid #e3ebf5;box-shadow:0 2px 8px rgba(22,54,95,.04);gap:6px}
+nav button{border-radius:999px;color:#4b5e75;font-weight:600;transition:.15s}nav button:hover{background:#f0f5fc}
+nav button.on{background:var(--acc);color:var(--pri2)}
+.nbad{display:inline-block;min-width:18px;padding:0 5px;border-radius:999px;background:#d64545;color:#fff;font-size:11px;line-height:18px;text-align:center;margin-left:2px}
+.card{border:1px solid #e3ebf5;border-radius:14px;box-shadow:0 1px 2px rgba(16,42,77,.04),0 6px 18px rgba(16,42,77,.04);padding:16px}
+.card h2{color:#16365f}
+.btn{border-radius:8px;border-color:#d6e2f0;transition:.15s}.btn:hover{background:#f2f7fd;border-color:#b9cfec}
+.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}.btn.p:hover{background:var(--pri2);border-color:var(--pri2)}
+input,select,textarea{border-color:#d6e2f0;border-radius:8px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#8fb6ec;box-shadow:0 0 0 3px #e1edfc}
+.kpi{border:1px solid #e3ebf5;border-radius:14px;box-shadow:0 1px 2px rgba(16,42,77,.04);border-top:4px solid #9cc0f0}
+th{background:#f4f8fd;color:#3d5370}tr:hover td{background:#f8fbff}
+.tasklist .it{border-radius:12px;border-color:#e3ebf5;transition:.15s}.tasklist .it:hover{border-color:#b9cfec}
+.tasklist .it.on{border-color:var(--pri);box-shadow:0 0 0 3px var(--acc)}
+.bar{background:#e8eef6}.bar i{background:linear-gradient(90deg,#5b9cf2,#2b6cdf)}
+.kbc{background:#eef4fb}.kcard{border-color:#e3ebf5;border-radius:10px;box-shadow:0 1px 2px rgba(16,42,77,.05)}
+.toast{background:#16365f;border-radius:10px}
+.modal .box{border-radius:16px}
+.mnu{position:relative}.mnuL{position:absolute;right:0;top:110%;background:#fff;border:1px solid #dfe8f3;border-radius:10px;box-shadow:0 10px 30px rgba(16,42,77,.15);min-width:210px;z-index:70;padding:4px}
+.mnuL a{display:block;padding:8px 12px;border-radius:8px;color:var(--tx);cursor:pointer;text-decoration:none}.mnuL a:hover{background:#f0f5fc}
+/* Nhắc việc */
+.chip{border:1px solid #cfe0f6;background:#fff;border-radius:999px;padding:5px 12px;cursor:pointer;font:inherit;font-size:13px;color:#2b4a72}
+.chip:hover{background:#f0f6ff}.chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.ntq{width:100%;font-size:15px;padding:11px 14px;border-radius:12px}
+.ntg{margin-bottom:12px}.ntgh{font-weight:700;color:#3d5370;font-size:13px;margin:4px 2px 6px}.ntgh span{background:#e6f0fd;color:#1f56b8;border-radius:999px;padding:0 7px;font-size:12px;margin-left:4px}
+.nti{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid #e6edf6;border-radius:12px;margin-bottom:6px;background:#fff;transition:.15s}
+.nti:hover{border-color:#b9cfec;box-shadow:0 2px 8px rgba(16,42,77,.06)}.nti.imp{border-left:4px solid #f0a500}.nti.done{opacity:.6}.nti.done .ntt{text-decoration:line-through}
+.ntck{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #9cb7da;background:#fff;cursor:pointer;color:#fff;font-size:12px;line-height:18px;padding:0;margin-top:1px}
+.ntck:hover{border-color:var(--pri);background:#eef5ff}.done .ntck{background:#2e8b57;border-color:#2e8b57}
+.ntt{font-weight:600;color:#1b2a3a;word-break:break-word}.ntm{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px;font-size:12px}.ntm a{color:var(--pri);text-decoration:none}
+.ntact{display:flex;gap:4px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.ntsums{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.ntsum{background:#f6f9fe;border:1px solid #e3ebf5;border-radius:12px;padding:10px;text-align:center}.ntsum b{display:block;font-size:22px}.ntsum span{font-size:12px;color:var(--mut)}
+.ntempty{text-align:center;padding:30px 10px;font-size:15px}
+.alm{border:1px solid #e3ebf5;border-radius:12px;padding:10px 12px;margin-bottom:8px;background:#f8fbff}
+#mdAlarm .box{border-top:6px solid var(--pri)}
+@media(max-width:700px){.ntact .btn{padding:3px 6px}.ntsums{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
 <header>
   <div><h1>📒 SỔ THEO DÕI TIẾN ĐỘ, CHẬM MUỘN CỦA CSKV</h1><small id="hdDonVi"></small></div>
-  <div class="row"><div class="srch"><input id="gSearch" placeholder="🔍 Tìm đ/c, thôn, nhiệm vụ, cơ sở…" oninput="doSearch()" onfocus="doSearch()" autocomplete="off"><div id="gRes" class="sres hide"></div></div><small id="cloudSt" style="opacity:.9"></small><small id="syncSt" style="opacity:.9"></small><button class="btn s hide" id="btnInstall" onclick="caiApp()">📲 Cài ứng dụng</button><button class="btn s" onclick="openSummary()">📊 Tổng hợp gửi Zalo</button><button class="btn s" onclick="syncDrive(false)">🔄 Đồng bộ Drive</button><button class="btn s" onclick="exportJSON()">💾 Sao lưu</button><button class="btn s" onclick="$('#fImp').click()">📂 Khôi phục</button><input type="file" id="fImp" accept=".json" class="hide" onchange="importJSON(this)"></div>
+  <div class="row"><div class="srch"><input id="gSearch" placeholder="🔍 Tìm đ/c, thôn, nhiệm vụ, cơ sở…" oninput="doSearch()" onfocus="doSearch()" autocomplete="off"><div id="gRes" class="sres hide"></div></div><small id="cloudSt" style="opacity:.9"></small><small id="syncSt" style="opacity:.9"></small><button class="btn s hide" id="btnInstall" onclick="caiApp()">📲 Cài ứng dụng</button><button class="btn s p" onclick="openNT()">⏰ Nhắc tôi</button><button class="btn s" onclick="openSummary()">📊 Tổng hợp gửi Zalo</button>
+  <div class="mnu"><button class="btn s" title="Thêm" onclick="event.stopPropagation();$('#mnuL').classList.toggle('hide')">⋯</button>
+   <div class="mnuL hide" id="mnuL"><a onclick="syncDrive(false)">🔄 Đồng bộ Drive</a><a onclick="exportJSON()">💾 Sao lưu về máy</a><a onclick="$('#fImp').click()">📂 Khôi phục từ file</a><a onclick="document.querySelector('#nav [data-t=ch]').click()">⚙️ Cài đặt</a></div></div><input type="file" id="fImp" accept=".json" class="hide" onchange="importJSON(this)"></div>
 </header>
 <nav id="nav">
   <button data-t="tq" class="on">📊 Tổng quan</button>
+  <button data-t="toi">⏰ Việc của tôi</button>
   <button data-t="nv">📝 Nhiệm vụ &amp; theo dõi</button>
   <button data-t="kb">🗂 Bảng Kanban</button>
   <button data-t="lich">📅 Lịch</button>
@@ -106,7 +154,8 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
     <p class="mut">Trang web công khai không chứa sẵn họ tên, SĐT cán bộ. Chọn 1 trong các cách sau (chỉ làm 1 lần trên mỗi máy/trình duyệt):</p>
     <div class="row"><button class="btn p" onclick="$('#fImp').click()">📂 Nạp file sao lưu (.json)</button><button class="btn p" onclick="$('#fCSKVx').click()">📥 Nhập danh sách từ Excel</button>
       <button class="btn" onclick="document.querySelector('#nav [data-t=ch]').click();setTimeout(()=>$('#sCloud').scrollIntoView({block:'center'}),100)">☁️ Tải từ Google (đã bật lưu Google)</button><button class="btn" onclick="openCSKV()">＋ Thêm tay từng người</button></div></div>
-  <div class="card row" style="background:#fff7f6;border-color:#f2b1aa"><div class="grow"><b>📊 Tổng hợp nhanh gửi nhóm Zalo</b><div class="mut">Một bấm: tự liệt kê ai chậm (chưa nộp, quá hạn), ai nộp muộn, ai đã nộp đúng hạn của các nhiệm vụ → soạn sẵn tin nhắn.</div></div><button class="btn p" onclick="openSummary()">📊 Tổng hợp ai chậm – ai muộn – ai đã nộp</button></div>
+  <div class="card"><div class="row"><h2 class="grow" style="margin:0">⏰ Việc của tôi hôm nay</h2><button class="btn s p" onclick="openNT()">＋ Nhắc tôi</button><button class="btn s" onclick="document.querySelector('#nav [data-t=toi]').click()">Xem tất cả →</button></div><div id="ntToday" style="margin-top:10px"></div></div>
+  <div class="card row" style="background:#f0f6ff;border-color:#cfe0f6"><div class="grow"><b>📊 Tổng hợp nhanh gửi nhóm Zalo</b><div class="mut">Một bấm: tự liệt kê ai chậm (chưa nộp, quá hạn), ai nộp muộn, ai đã nộp đúng hạn của các nhiệm vụ → soạn sẵn tin nhắn.</div></div><button class="btn p" onclick="openSummary()">📊 Tổng hợp ai chậm – ai muộn – ai đã nộp</button></div>
   <div class="kpis" id="kpis"></div>
   <div class="card" style="margin-top:14px"><h2>⏰ Việc cần nhắc ngay</h2><div class="tw" id="canNhac"></div></div>
 </section>
@@ -125,12 +174,33 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
   </div>
 </section>
 
+<!-- VIỆC CỦA TÔI -->
+<section id="tab-toi" class="hide">
+  <div class="grid2">
+    <div>
+      <div class="card"><h2>⏰ Thêm việc cần nhớ</h2>
+        <input id="ntQuick" class="ntq" placeholder="Gõ việc rồi Enter… VD: 14h mai báo cáo BCH kết quả rà soát" onkeydown="if(event.key==='Enter')quickNT()">
+        <div class="row" style="margin-top:10px;gap:6px" id="ntChips"></div>
+        <p class="mut" style="margin:8px 0 0">Chọn mốc giờ ở trên, hoặc gõ luôn trong câu: <i>“8h30 mai…”, “14h thứ 6…”, “20/11 9h…”, “… hằng tuần”</i>. Có dấu <b>!</b> hoặc chữ <i>gấp</i> sẽ đánh dấu ⭐ quan trọng.</p>
+      </div>
+      <div class="card"><h2>📊 Tóm tắt</h2><div class="ntsums" id="ntSum"></div>
+        <div style="margin-top:12px;display:grid;gap:6px">
+          <label><input type="checkbox" id="ntAuto" onchange="S.settings.ntAuto=this.checked;if(this.checked)syncAutoNT();save();renderNT()"> 🤖 Tự nhắc tôi 1 ngày trước hạn mỗi nhiệm vụ đã giao CSKV (8:00 sáng)</label>
+          <label><input type="checkbox" id="ntSound" onchange="S.settings.ntSound=this.checked;saveLocal()"> 🔔 Phát âm báo khi đến giờ</label>
+          <span class="mut">Khi đến giờ: hiện hộp nhắc giữa màn hình + âm báo (trang phải đang mở). Muốn điện thoại cũng báo: bấm 📅 để đưa việc vào Google Lịch.</span>
+        </div></div>
+    </div>
+    <div class="card"><div class="row"><h2 class="grow" style="margin:0">Việc của tôi</h2><select id="ntF" onchange="renderNT()"><option value="">Tất cả</option><option value="imp">⭐ Quan trọng</option><option value="tay">Tôi tự thêm</option><option value="auto">🤖 Tự tạo từ nhiệm vụ</option></select><button class="btn p s" onclick="openNT()">＋ Thêm chi tiết</button></div>
+      <div id="ntList" style="margin-top:10px"></div></div>
+  </div>
+</section>
+
 <!-- KANBAN -->
 <section id="tab-kb" class="hide"><div class="card"><div class="row"><h2 class="grow" style="margin:0">🗂 Bảng Kanban</h2><select id="kbTask" onchange="renderKB()" style="max-width:100%"></select></div>
   <p class="mut">Kéo thả thẻ giữa các cột để đổi trạng thái (trên điện thoại dùng nút trên thẻ). Cột “Chờ duyệt” chỉ hiện với nhiệm vụ bật “Cần duyệt bài”.</p><div id="kb" class="kb"></div></div></section>
 <!-- LỊCH -->
 <section id="tab-lich" class="hide"><div class="card"><div class="row"><button class="btn" onclick="lichM(-1)">◀</button><h2 id="lichT" class="grow" style="margin:0;text-align:center"></h2><button class="btn" onclick="lichM(0)">Tháng này</button><button class="btn" onclick="lichM(1)">▶</button></div>
-  <div id="lich" class="lich"></div><p class="mut">Màu theo lĩnh vực. Ô viền nét đứt 🔁: nhiệm vụ lặp lại sẽ tự tạo. Bấm vào nhiệm vụ để mở.</p></div></section>
+  <div id="lich" class="lich"></div><p class="mut">Màu theo lĩnh vực. ⏰ nền xanh nhạt: việc của tôi. Ô viền nét đứt 🔁: nhiệm vụ lặp lại sẽ tự tạo. Bấm vào để mở.</p></div></section>
 <!-- MẪU -->
 <section id="tab-mau" class="hide"><div class="card"><div class="row"><h2 class="grow" style="margin:0">📋 Mẫu nhiệm vụ &amp; việc lặp lại</h2><button class="btn p" onclick="openMau()">＋ Thêm mẫu</button></div>
   <p class="mut">Lưu sẵn các loại việc hay giao (tên, căn cứ, link nộp, tiêu chí đạt, kiểm tra tự động). Bật “Lặp lại hằng tháng” để phần mềm tự tạo nhiệm vụ mỗi tháng, giao cho toàn bộ CSKV đang theo dõi.</p><div id="mauList" class="tasklist"></div></div></section>
@@ -308,7 +378,7 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
 <li>Sao chép <b>URL ứng dụng web</b> (đuôi <code>/exec</code>) → dán vào ô “URL Apps Script” ở tab Cài đặt → <b>Kiểm tra kết nối</b>.</li>
 <li>Khi giao nhiệm vụ, dán link thư mục con vào ô “📁 Link thư mục Google Drive”.</li>
 </ol>
-<div class="card" style="background:#fff7f6"><b>Đã cài bản cũ? Cập nhật lên bản 3</b> (cần cho ☁️ lưu dữ liệu lên Google, 🗄 sao lưu định kỳ và 🔍 kiểm tra file trên Drive):
+<div class="card" style="background:#f0f6ff"><b>Đã cài bản cũ? Cập nhật lên bản 3</b> (cần cho ☁️ lưu dữ liệu lên Google, 🗄 sao lưu định kỳ và 🔍 kiểm tra file trên Drive):
 <ol style="margin:6px 0 0"><li>Mở dự án Apps Script cũ → xoá hết mã, dán mã mới bên dưới → 💾 Lưu.</li>
 <li><b>Triển khai → Quản lý các bản triển khai</b> → bấm ✏️ (Chỉnh sửa) → mục “Phiên bản” chọn <b>Phiên bản mới</b> → <b>Triển khai</b>. Giữ nguyên URL cũ, không cần dán lại.</li>
 <li>Google sẽ hỏi cấp thêm quyền (Google Sheets, kết nối ngoài, chạy theo lịch): bấm cho phép.</li>
@@ -359,6 +429,18 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
   <textarea id="cmTx" style="min-height:70px;margin-top:8px" placeholder="VD: Đã gọi điện, đ/c hẹn thứ 6 nộp" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey))addCmt()"></textarea>
   <div class="row" style="margin-top:8px;justify-content:flex-end"><button class="btn" onclick="closeMd('mdCmt')">Đóng</button><button class="btn p" onclick="addCmt()">Thêm ghi chú</button></div>
 </div></div>
+<div class="modal hide" id="mdNT"><div class="box" style="max-width:560px"><h3 id="mdNTT">⏰ Thêm nhắc việc cho tôi</h3>
+  <label class="f">Việc cần nhớ *<input id="ntTxt" placeholder="VD: Báo cáo BCH kết quả rà soát T11"></label>
+  <div class="row" style="margin-top:8px"><label class="f">Ngày giờ nhắc<input type="datetime-local" id="ntAt"></label>
+    <label class="f grow">Lặp lại<select id="ntLap"><option value="khong">Không lặp</option><option value="ngay">Hằng ngày</option><option value="ngaylv">Ngày làm việc (T2–T6)</option><option value="tuan">Hằng tuần</option><option value="thang">Hằng tháng</option></select></label></div>
+  <div class="row" style="margin-top:6px;gap:6px"><span class="mut">Chọn nhanh:</span><button class="chip" onclick="$('#ntAt').value=toLocalInput(dAt(0,17))">Hôm nay 17:00</button><button class="chip" onclick="$('#ntAt').value=toLocalInput(dAt(1,7,30))">Sáng mai 7:30</button><button class="chip" onclick="$('#ntAt').value=toLocalInput(dAt(1,14))">Chiều mai 14:00</button><button class="chip" onclick="$('#ntAt').value=''">Không đặt giờ</button></div>
+  <label style="display:block;margin-top:8px"><input type="checkbox" id="ntUT"> ⭐ Việc quan trọng</label>
+  <label class="f" style="margin-top:8px">Liên kết nhiệm vụ (không bắt buộc)<select id="ntTask"></select></label>
+  <label class="f" style="margin-top:8px">Ghi chú<textarea id="ntGhi" style="min-height:60px"></textarea></label>
+  <div class="row" style="margin-top:12px"><button class="btn" id="ntDel" onclick="delNT()">🗑 Xoá</button><button class="btn" onclick="if(ntEdit)ggLich(ntEdit);else alert('Bấm Lưu trước, sau đó bấm 📅 trên việc đó.')">📅 Đưa vào Google Lịch</button><span class="grow"></span><button class="btn" onclick="closeMd('mdNT')">Huỷ</button><button class="btn p" onclick="saveNT()">Lưu</button></div>
+</div></div>
+<div class="modal hide" id="mdAlarm"><div class="box" style="max-width:560px"><h3>⏰ Đến giờ nhắc việc</h3><div id="alarmList"></div>
+  <div class="row" style="justify-content:flex-end;margin-top:6px"><button class="btn" onclick="alarmIds.clear();showAlarm()">Đóng</button></div></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -415,6 +497,7 @@ function load(){
   S.tasks.forEach(t=>{t.log=t.log||[];t.fileMap=t.fileMap||{};t.files=t.files||[];});
   ensureDefaults();
   applyPreset();
+  ntList();if(syncAutoNT())saveLocal();
   if(!S.settings.gopNhac1){const bo=gopNhacTrungNgay();S.settings.gopNhac1=true;save();if(bo)setTimeout(()=>toast(`Đã gộp ${bo} lượt nhắc trùng ngày`),800);}
 }
 function presetExtra(t){const byName=n=>S.cskv.find(c=>norm(c.ten)===norm(n));
@@ -503,7 +586,7 @@ document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('main>section').forEach(s=>s.classList.toggle('hide',s.id!=='tab-'+b.dataset.t));
   renderAll();
 });
-function renderAll(){$('#hdDonVi').textContent=S.settings.donVi;renderTQ();renderTasks();renderDetail();renderSo();renderDS();fillSettings();renderKB();renderLich();renderMau();}
+function renderAll(){$('#hdDonVi').textContent=S.settings.donVi;renderTQ();renderTasks();renderDetail();renderSo();renderDS();fillSettings();renderKB();renderLich();renderMau();renderNT();}
 
 /* ===== TỔNG QUAN ===== */
 function renderTQ(){
@@ -515,7 +598,7 @@ function renderTQ(){
   $('#kpis').innerHTML=[[active,'CSKV đang theo dõi'],[open,'Nhiệm vụ đang mở'],[over,'Lượt quá hạn chưa nộp','var(--bad)'],[soon,'Lượt sắp đến hạn (<24h)','var(--warn)'],[redo,'Lượt phải nộp lại','#9a4300'],[late,'Lượt đã nộp muộn','var(--late)']]
     .map(k=>`<div class="kpi"><b style="color:${k[2]||'inherit'}">${k[0]}</b><span>${k[1]}</span></div>`).join('');
   rows.sort((a,b)=>new Date(a[0].han)-new Date(b[0].han));
-  $('#canNhac').innerHTML=rows.length?`<table><tr><th>CSKV</th><th>Địa bàn</th><th>Nhiệm vụ</th><th>Hạn</th><th>Chậm / còn</th><th>Trạng thái</th><th>Đã nhắc</th><th>Thao tác</th></tr>${rows.map(([t,c,s])=>`<tr><td>${esc(c.ten)}</td><td>${esc(c.diaBan)}</td><td>${esc(t.ten)}</td><td>${fmtDT(t.han)}</td><td>${chamTag(t,c.id)}</td><td>${tagSt(s)}${ycTag(t,c.id)}${ldTag(t,c.id)}</td><td>${nhacCount(t,c.id)} lần</td><td>${s==='redo'?redoBtns(t,c.id):nhacBtns(t,c.id)}</td></tr>`).join('')}</table>`:'<p class="mut">✅ Không có CSKV nào quá hạn, sắp đến hạn hoặc phải nộp lại.</p>';
+  $('#canNhac').innerHTML=rows.length?`<table><tr><th>CSKV</th><th>Địa bàn</th><th>Nhiệm vụ</th><th>Hạn</th><th>Chậm / còn</th><th>Trạng thái</th><th>Đã nhắc</th><th>Thao tác</th></tr>${rows.slice(0,8).map(([t,c,s])=>`<tr><td>${esc(c.ten)}</td><td>${esc(c.diaBan)}</td><td>${esc(t.ten)}</td><td>${fmtDT(t.han)}</td><td>${chamTag(t,c.id)}</td><td>${tagSt(s)}${ycTag(t,c.id)}${ldTag(t,c.id)}</td><td>${nhacCount(t,c.id)} lần</td><td>${s==='redo'?redoBtns(t,c.id):nhacBtns(t,c.id)}</td></tr>`).join('')}</table>${rows.length>8?`<p class="mut" style="margin:8px 0 0">… và ${rows.length-8} lượt khác. <a href="#" onclick="document.querySelector('#nav [data-t=kb]').click();return false">Xem đầy đủ trên Bảng Kanban →</a></p>`:''}`:'<p class="mut">✅ Không có CSKV nào quá hạn, sắp đến hạn hoặc phải nộp lại.</p>';
 }
 function nhacBtns(t,cid){const n=nhacCount(t,cid);
   return `<div class="row">${[1,2,3].map(l=>`<button class="btn s n${l}" ${l!==Math.min(n+1,3)&&!(n>=3&&l===3)?'style="opacity:.55"':''} onclick="openMsg('${t.id}','${cid}',${l})">Nhắc ${l}</button>`).join('')}<button class="btn s g" onclick="markNop('${t.id}','${cid}')">✔ Đã nộp</button>${ldBtn(t,cid)}${cmtBtn(t,cid)}</div>`;}
@@ -581,7 +664,7 @@ function renderDetail(){
   if(!t){el.innerHTML='<p class="mut">Chọn một nhiệm vụ bên trái hoặc bấm “＋ Giao mới”.</p>';return;}
   const[d,tot]=taskProg(t);const chua=t.assign.filter(c=>!(t.rec[c]&&t.rec[c].nopLuc)&&cs(c));
   el.innerHTML=`<div class="row"><h2 class="grow" style="margin:0">${esc(t.ten)}</h2>
-   <button class="btn s" onclick="openKT('${t.id}')">🔍 Kiểm tra bài nộp</button><button class="btn s" onclick="phieuGV('${t.id}')">📄 Phiếu giao việc</button><button class="btn s" onclick="openTask('${t.id}')">✏️ Sửa</button><button class="btn s" onclick="delTask('${t.id}')">🗑 Xoá</button></div>
+   <button class="btn s" onclick="openNT(null,{txt:'Kiểm tra tiến độ: '+S.tasks.find(x=>x.id==='${t.id}').ten,taskId:'${t.id}',at:toLocalInput(dAt(1,8))})">⏰ Nhắc tôi</button><button class="btn s" onclick="openKT('${t.id}')">🔍 Kiểm tra bài nộp</button><button class="btn s" onclick="phieuGV('${t.id}')">📄 Phiếu giao việc</button><button class="btn s" onclick="openTask('${t.id}')">✏️ Sửa</button><button class="btn s" onclick="delTask('${t.id}')">🗑 Xoá</button></div>
    <div class="row" style="margin:4px 0">${nhanTag(t.nhan)}${t.mauId?'<span class="tag t-na">🔁 từ mẫu</span>':''}${t.canDuyet?'<span class="tag t-na">cần duyệt bài</span>':''}${t.kiemTra?'<span class="tag t-na">🔍 '+KT_LOAI[t.kiemTra]+'</span>':''}</div>
    ${(t.tieuChi||[]).length?`<details><summary>☑️ Tiêu chí đạt (${t.tieuChi.length})</summary><ul style="margin:4px 0 8px">${t.tieuChi.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></details>`:''}
    <p class="mut">Căn cứ: ${esc(t.canCu||'—')} · Hạn: <b>${fmtDT(t.han)}</b> (${chamInfo(t,null).tt.toLowerCase()}) · Đã nộp ${d}/${tot}${t.ghiChu?' · '+esc(t.ghiChu):''}</p>
@@ -589,9 +672,9 @@ function renderDetail(){
    ${t.drive?`<p class="mut">📁 <a href="${esc(t.drive)}" target="_blank">Thư mục Drive nhận bài</a> · ${t.files.length} file · ${t.driveErr?'<span class="bad-tx">Lỗi: '+esc(t.driveErr)+'</span>':(S.settings.lastSync?'đồng bộ lúc '+fmtDT(S.settings.lastSync):'chưa đồng bộ')} <button class="btn s" onclick="syncDrive(false)">🔄 Đồng bộ</button></p>`:''}
    <div class="row" style="margin-bottom:8px"><button class="btn p" onclick="openTongHop('${t.id}')">📊 Gửi tình hình nộp vào nhóm (đã nộp ${d} / chưa nộp ${chua.length})</button><button class="btn" ${chua.length?'':'disabled'} onclick="openGroupMsg('${t.id}')">📢 Chỉ nhắc ${chua.length} đ/c chưa nộp</button>
    <select id="dtF" onchange="renderDetail()"><option value="">Tất cả</option><option value="chua">Chưa nộp</option><option value="over">Quá hạn</option><option value="late">Nộp muộn</option><option value="ok">Đúng hạn</option><option value="redo">Phải nộp lại</option><option value="loi">Có lưu ý</option><option value="ld">Có lý do giải trình</option></select></div>
-   <div class="tw"><table><tr><th>TT</th><th>CSKV</th><th>Địa bàn</th><th>Hạn</th><th>Chậm / còn</th><th>Trạng thái</th><th>Thời điểm nộp</th><th>Lịch sử nhắc</th><th>Thao tác</th></tr>
+   <div class="tw"><table><tr><th>TT</th><th>CSKV</th><th>Địa bàn</th><th>Chậm / còn</th><th>Trạng thái</th><th>Thời điểm nộp</th><th>Lịch sử nhắc</th><th>Thao tác</th></tr>
    ${t.assign.map(cid=>cs(cid)).filter(Boolean).filter(c=>{const v=el._f||'',s=stOf(t,c.id);return!v||(v==='redo'?s==='redo':v==='ld'?!!(t.rec[c.id]&&t.rec[c.id].lyDo):v==='loi'?!!(t.rec[c.id]&&t.rec[c.id].loi):v==='chua'?['over','soon','wait'].includes(s):s===v);}).map((c,i)=>{const r=t.rec[c.id]||{};const s=stOf(t,c.id);
-     return`<tr><td>${i+1}</td><td>${esc(c.ten)}</td><td>${esc(c.diaBan||c.chiTiet)}</td><td>${fmtD(t.han)}</td><td>${chamTag(t,c.id)}</td><td>${tagSt(s)}${ycTag(t,c.id)}${ldTag(t,c.id)}</td>
+     return`<tr><td>${i+1}</td><td>${esc(c.ten)}</td><td>${esc(c.diaBan||c.chiTiet)}</td><td>${chamTag(t,c.id)}</td><td>${tagSt(s)}${ycTag(t,c.id)}${ldTag(t,c.id)}</td>
      <td>${r.nopLuc?fmtDT(r.nopLuc)+(r.nguon==='drive'?` <a href="${esc(r.file&&r.file.url)}" target="_blank" title="${esc(r.file&&r.file.name)}">📁</a>`:'')+` <button class="btn s" title="Huỷ ghi nhận nộp" onclick="unNop('${t.id}','${c.id}')">↺</button>`+(r.nopLai?`<div class="mut">Nộp lại: ${fmtDT(r.nopLai)}${r.nguonLai==='drive'&&r.fileLai?` <a href="${esc(r.fileLai.url)}" target="_blank" title="${esc(r.fileLai.name)}">📁</a>`:''}</div>`:''):''}</td>
      <td class="mut" style="white-space:nowrap">${(r.nhac||[]).map((n,k)=>`Lần ${n.lan}: ${fmtDT(n.at)} <a href="#" title="Xoá lượt nhắc này" style="color:var(--bad);text-decoration:none" onclick="delNhac('${t.id}','${c.id}',${k});return false">✕</a>`).join('<br>')||'—'}</td>
      <td>${!r.nopLuc?nhacBtns(t,c.id):s==='redo'?redoBtns(t,c.id):doneBtns(t,c.id)}</td></tr>`}).join('')}</table></div>${unmatchedHTML(t)}${logHTML(t)}`;
@@ -618,7 +701,7 @@ function saveTask(){
   Object.assign(t,{ten,han,canCu:$('#tCanCu').value.trim(),ghiChu:$('#tGhiChu').value.trim(),drive:$('#tDrive').value.trim(),driveMuon:$('#tDriveMuon').value.trim(),linkNop:$('#tLinkNop').value.trim(),linkMuon:$('#tLinkMuon').value.trim(),assign,nhan:$('#tNhan').value,kiemTra:$('#tKT').value,canDuyet:$('#tCD').checked,tieuChi:$('#tTC').value.split('\n').map(s=>s.trim()).filter(Boolean)});
   if(!t.mauId&&$('#tMau').value)t.mauId=$('#tMau').value;
   if(t.drive&&!folderId(t.drive))alert('Link thư mục Drive chưa đúng dạng …/folders/<mã>. Kiểm tra lại.');
-  curTask=t.id;save();closeMd('mdTask');renderAll();
+  curTask=t.id;syncAutoNT();save();closeMd('mdTask');renderAll();
   document.querySelector('#nav [data-t=nv]').click();toast('Đã lưu nhiệm vụ');
 }
 function delTask(id){if(!confirm('Xoá nhiệm vụ này cùng toàn bộ lịch sử nộp/nhắc?'))return;S.tasks=S.tasks.filter(t=>t.id!==id);curTask=null;save();renderAll();}
@@ -1146,11 +1229,13 @@ function lichM(d){lichOff=d===0?0:lichOff+d;renderLich();}
 function renderLich(){const el=$('#lich');if(!el)return;const now=new Date(),base=new Date(now.getFullYear(),now.getMonth()+lichOff,1),y=base.getFullYear(),m=base.getMonth();
   $('#lichT').textContent=`Tháng ${m+1}/${y}`;const off=(base.getDay()+6)%7,ev={},key=d=>d.toDateString();
   S.tasks.forEach(t=>{const d=new Date(t.han);(ev[key(d)]=ev[key(d)]||[]).push({t});});
+  ntList().filter(n=>!n.xong&&n.at).forEach(n=>{const d=new Date(n.at);(ev[key(d)]=ev[key(d)]||[]).push({nt:n});});
   const kyM=ym(base);S.mau.forEach(mu=>{if(!mu.lap||!mu.lap.bat||(mu.lap.batDau&&kyM<mu.lap.batDau)||S.tasks.some(t=>t.mauId===mu.id&&t.ky===kyM))return;
     if(kyM<ym(now))return;const last=new Date(y,m+1,0).getDate(),d=new Date(y,m,Math.min(+mu.lap.ngayHan||last,last));(ev[key(d)]=ev[key(d)]||[]).push({mu});});
   let h=['Th 2','Th 3','Th 4','Th 5','Th 6','Th 7','CN'].map(x=>`<div class="lh">${x}</div>`).join('');
   for(let i=0;i<42;i++){const d=new Date(y,m,1-off+i);if(i>=35&&d.getMonth()!==m)break;
     h+=`<div class="ld ${d.getMonth()!==m?'mo':''} ${key(d)===key(now)?'td':''}"><span class="n">${d.getDate()}</span>${(ev[key(d)]||[]).map(x=>{
+      if(x.nt){const d=new Date(x.nt.at);return`<span class="lt" style="background:#e6f0fd;color:#1f56b8" title="${esc(x.nt.txt)}" onclick="openNT('${x.nt.id}')">⏰ ${pad2(d.getHours())}:${pad2(d.getMinutes())} ${esc(x.nt.txt)}</span>`;}
       if(x.mu)return`<span class="lt du" title="Sẽ tự tạo: ${esc(x.mu.ten)}">🔁 ${esc(x.mu.ten.replace(/\{thang\}/g,(m+1)+'/'+y))}</span>`;
       const t=x.t,[dd,tot]=taskProg(t);return`<span class="lt" style="background:${NHAN[t.nhan]||'#455a64'}" title="${esc(t.ten)} – đạt ${dd}/${tot}" onclick="goTask('${t.id}')">${dd===tot?'✅':'⏳'} ${dd}/${tot} ${esc(t.ten)}</span>`;}).join('')}</div>`;}
   el.innerHTML=h;}
@@ -1176,7 +1261,7 @@ function doSearch(){const box=$('#gRes'),q=norm($('#gSearch').value).trim();if(q
       if(r.lyDo&&has(r.lyDo))R.push(`<a href="#" onclick="goTask('${t.id}');return false">📝 ${esc(r.lyDo)} <span class="mut">lý do – đ/c ${esc(c.ten)}</span></a>`);});});
   box.innerHTML=R.slice(0,80).join('')||'<div class="mut" style="padding:8px">Không tìm thấy.</div>';box.classList.remove('hide');}
 function goCSKV(id){$('#gRes').classList.add('hide');showHist(id);}
-document.addEventListener('click',e=>{if(!e.target.closest('.srch')&&$('#gRes'))$('#gRes').classList.add('hide');});
+document.addEventListener('click',e=>{if(!e.target.closest('.srch')&&$('#gRes'))$('#gRes').classList.add('hide');if(!e.target.closest('.mnu')&&$('#mnuL'))$('#mnuL').classList.add('hide');});
 
 /* ---------- KIỂM TRA BÀI NỘP ---------- */
 const nh=s=>String(s??'').replace(/\s+/g,' ').trim().toUpperCase();
@@ -1322,7 +1407,7 @@ async function pushCloud(force){if(!cloudOn())return;if(cloud.busy){cloud.dirty=
   catch(e){setCloud('⚠️ Lỗi lưu Google – dữ liệu vẫn ở máy này');console.warn(e);}
   cloud.busy=false;if(cloud.dirty)schedulePush();}
 function applyServer(d,ver){const keep={};LOCAL_KEYS.forEach(k=>keep[k]=S.settings[k]);S=d;S.settings={...(S.settings||{}),...keep};S._ver=ver;
-  S.settings.tpl={...DEF_TPL,...(S.settings.tpl||{})};S.tasks.forEach(t=>{t.log=t.log||[];t.fileMap=t.fileMap||{};t.files=t.files||[];});ensureDefaults();saveLocal();renderAll();}
+  S.settings.tpl={...DEF_TPL,...(S.settings.tpl||{})};S.tasks.forEach(t=>{t.log=t.log||[];t.fileMap=t.fileMap||{};t.files=t.files||[];});ensureDefaults();ntList();saveLocal();renderAll();}
 async function pullCloud(force){if(!cloudOn()){if(force)alert('Chưa bật lưu lên Google (tab ⚙️ Cài đặt).');return;}
   if(cloud.busy)return;try{setCloud('⏳ Đang tải từ Google…');const r=await jsonp(gsUrl('load'));if(r.error)throw new Error(r.error);
     if(!('data'in r))throw new Error('Mã Apps Script bản cũ – cần cập nhật (xem 📘 Hướng dẫn)');
@@ -1377,6 +1462,122 @@ function nhacTaiBK(){const n=+(S.settings.nhacBK??7);if(!n||!S.cskv.length)retur
   el.innerHTML=`<div class="row"><div class="grow">💾 <b>${last?'Đã '+Math.floor((Date.now()-last)/864e5)+' ngày chưa tải bản sao lưu về máy.':'Chưa có bản sao lưu nào trên máy này.'}</b> <span class="mut">Nên tải 1 bản dự phòng (lưu vào ổ D: hoặc USB).</span></div><button class="btn p" onclick="exportJSON();this.closest('.card').remove()">💾 Tải bản sao lưu</button><button class="btn" onclick="this.closest('.card').remove()">Để sau</button></div>`;
   $('main').prepend(el);}
 
+
+/* =====================================================================
+   NHẮC VIỆC CỦA TÔI (v12)
+   ===================================================================== */
+const NT_LAP={khong:'Không lặp',ngay:'Hằng ngày',ngaylv:'Ngày làm việc (T2–T6)',tuan:'Hằng tuần',thang:'Hằng tháng'};
+const pad2=n=>String(n).padStart(2,'0');
+const toLocalInput=d=>{d=new Date(d);return`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;};
+const dAt=(addDay,h,m)=>{const d=new Date();d.setDate(d.getDate()+addDay);d.setHours(h,m||0,0,0);return d;};
+function ntList(){return S.nhacToi=S.nhacToi||[];}
+function ntNext(n){const d=new Date(n.at);const step=()=>{if(n.lap==='ngay')d.setDate(d.getDate()+1);else if(n.lap==='tuan')d.setDate(d.getDate()+7);
+    else if(n.lap==='thang'){const day=n.ngayThang||d.getDate();d.setDate(1);d.setMonth(d.getMonth()+1);d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));}
+    else if(n.lap==='ngaylv'){do{d.setDate(d.getDate()+1);}while(d.getDay()===0||d.getDay()===6);}};
+  step();while(d<new Date())step();return d;}
+function ntWhen(n){if(!n.at)return{txt:'Không đặt giờ',cls:'t-na',g:'none'};const d=new Date(n.at),now=new Date(),dd=dayDiff(d,now),hm=pad2(d.getHours())+':'+pad2(d.getMinutes());
+  if(d<now){const ms=now-d,h=Math.floor(ms/36e5);return{txt:'Quá hạn '+(h<1?Math.max(1,Math.round(ms/6e4))+' phút':h<24?h+' giờ':Math.floor(h/24)+' ngày'),cls:'t-over',g:'qua'};}
+  if(dd===0)return{txt:'Hôm nay '+hm,cls:'t-soon',g:'nay'};if(dd===1)return{txt:'Ngày mai '+hm,cls:'t-wait',g:'mai'};
+  const thu=['CN','T2','T3','T4','T5','T6','T7'][d.getDay()];if(dd<=7)return{txt:`${thu} ${pad2(d.getDate())}/${pad2(d.getMonth()+1)} · ${hm}`,cls:'t-wait',g:'tuan'};
+  return{txt:`${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()} · ${hm}`,cls:'t-na',g:'sau'};}
+const NT_G=[['qua','🔴 Quá hạn'],['nay','📌 Hôm nay'],['mai','🌅 Ngày mai'],['tuan','🗓 7 ngày tới'],['sau','⏳ Sau này'],['none','📝 Không đặt giờ']];
+function ntItem(n,compact){const w=ntWhen(n),t=n.taskId&&S.tasks.find(x=>x.id===n.taskId);
+  return`<div class="nti ${n.uuTien?'imp':''} ${n.xong?'done':''}"><button class="ntck" title="${n.xong?'Bỏ đánh dấu':'Đánh dấu đã xong'}" onclick="ntXong('${n.id}')">${n.xong?'✔':''}</button>
+   <div class="grow" style="min-width:0"><div class="ntt">${n.uuTien?'⭐ ':''}${esc(n.txt)}</div>
+    <div class="ntm">${n.xong?`<span class="tag t-ok">Xong ${fmtDT(n.xongLuc)}</span>`:`<span class="tag ${w.cls}">${w.txt}</span>`}${n.lap&&n.lap!=='khong'?`<span class="tag t-na">🔁 ${NT_LAP[n.lap]}</span>`:''}${n.auto?'<span class="tag t-na">🤖 tự tạo</span>':''}${t?`<a href="#" onclick="goTask('${t.id}');return false">📝 ${esc(t.ten.length>40?t.ten.slice(0,40)+'…':t.ten)}</a>`:''}</div>
+    ${n.ghiChu&&!compact?`<div class="mut" style="margin-top:2px">${esc(n.ghiChu)}</div>`:''}</div>
+   ${n.xong?'':`<div class="ntact"><button class="btn s" title="Hoãn 1 giờ" onclick="ntHoan('${n.id}',60)">⏱ +1h</button>${compact?'':`<button class="btn s" title="Sáng mai 7:30" onclick="ntHoan('${n.id}','mai')">🌅</button><button class="btn s" title="Đưa vào Google Lịch (điện thoại cũng báo)" onclick="ggLich('${n.id}')">📅</button>`}<button class="btn s" title="Sửa" onclick="openNT('${n.id}')">✏️</button></div>`}</div>`;}
+function renderNT(){const L=ntList();const f=($('#ntF')||{}).value||'';
+  const act=L.filter(n=>!n.xong&&(!f||(f==='imp'?n.uuTien:f==='auto'?n.auto:!n.auto))).sort((a,b)=>(a.at||'9')<(b.at||'9')?-1:1);
+  const by={};act.forEach(n=>{const g=ntWhen(n).g;(by[g]=by[g]||[]).push(n);});
+  const el=$('#ntList');if(el){el.innerHTML=act.length?NT_G.filter(([g])=>by[g]).map(([g,h])=>`<div class="ntg"><div class="ntgh">${h} <span>${by[g].length}</span></div>${by[g].map(n=>ntItem(n)).join('')}</div>`).join('')
+      :'<div class="ntempty">🎉 Không còn việc nào cần nhớ.<br><span class="mut">Gõ việc vào ô bên trái rồi bấm Enter để thêm.</span></div>';
+    const done=L.filter(n=>n.xong).sort((a,b)=>a.xongLuc<b.xongLuc?1:-1);
+    el.innerHTML+=done.length?`<details style="margin-top:10px"><summary>✅ Đã xong (${done.length})</summary>${done.slice(0,30).map(n=>ntItem(n)).join('')}${done.length>5?`<button class="btn s" style="margin-top:6px" onclick="ntXoaXong()">🧹 Xoá các việc đã xong</button>`:''}</details>`:'';}
+  const qua=L.filter(n=>!n.xong&&n.at&&new Date(n.at)<new Date()).length,nay=L.filter(n=>!n.xong&&ntWhen(n).g==='nay').length,tuan=L.filter(n=>!n.xong&&['mai','tuan'].includes(ntWhen(n).g)).length;
+  const sm=$('#ntSum');if(sm)sm.innerHTML=[[qua,'Quá hạn','#d64545'],[nay,'Hôm nay','#e08a00'],[tuan,'7 ngày tới','#2b6cdf'],[L.filter(n=>n.xong).length,'Đã xong','#2e8b57']].map(x=>`<div class="ntsum"><b style="color:${x[2]}">${x[0]}</b><span>${x[1]}</span></div>`).join('');
+  const w=$('#ntToday');if(w){const top=L.filter(n=>!n.xong&&['qua','nay'].includes(ntWhen(n).g)).sort((a,b)=>a.at<b.at?-1:1);
+    w.innerHTML=top.length?top.slice(0,6).map(n=>ntItem(n,true)).join('')+(top.length>6?`<a href="#" onclick="document.querySelector('#nav [data-t=toi]').click();return false">Xem thêm ${top.length-6} việc…</a>`:''):'<p class="mut" style="margin:4px 0">Hôm nay chưa có việc nào cần nhớ. 👍</p>';}
+  const nb=document.querySelector('#nav [data-t=toi]');if(nb)nb.innerHTML='⏰ Việc của tôi'+(qua+nay?` <span class="nbad">${qua+nay}</span>`:'');
+  const ck=$('#ntAuto');if(ck){ck.checked=S.settings.ntAuto!==false;$('#ntSound').checked=S.settings.ntSound!==false;}
+  renderChips();}
+let ntPick=null;
+function chipOpts(){const now=new Date(),h=now.getHours();const o=[];
+  if(h<16)o.push(['Hôm nay 17:00',dAt(0,17)]);if(h<19)o.push(['Tối nay 20:00',dAt(0,20)]);
+  o.push(['Sáng mai 7:30',dAt(1,7,30)],['Chiều mai 14:00',dAt(1,14)]);
+  const t2=new Date();t2.setDate(t2.getDate()+((8-t2.getDay())%7||7));t2.setHours(7,30,0,0);o.push(['Thứ 2 tới 7:30',t2]);o.push(['Không đặt giờ',null]);return o;}
+function renderChips(){const el=$('#ntChips');if(!el)return;const o=chipOpts();if(ntPick===null||ntPick===undefined)ntPick=o[0][1]?o[0][1].toISOString():'';
+  el.innerHTML=o.map(([l,d])=>{const v=d?d.toISOString():'';return`<button class="chip ${v===ntPick?'on':''}" onclick="ntPick='${v}';renderChips();$('#ntQuick').focus()">${l}</button>`;}).join('')+
+    `<button class="chip" onclick="openNT(null,{txt:$('#ntQuick').value})">⚙️ Chọn giờ, lặp lại…</button>`;}
+/* Hiểu nhanh câu gõ: "8h30 mai", "14h thứ 6", "20/11 9h", "hằng tuần"… */
+function ntParse(s){let d=null,lap='khong';const x=norm(s);
+  const thu={'thu 2':1,'thu hai':1,'thu 3':2,'thu ba':2,'thu 4':3,'thu tu':3,'thu 5':4,'thu nam':4,'thu 6':5,'thu sau':5,'thu 7':6,'thu bay':6,'chu nhat':0,' cn ':0};
+  let base=null;const dm=s.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?/);
+  if(dm){base=new Date(dm[3]?+dm[3]:new Date().getFullYear(),+dm[2]-1,+dm[1]);}
+  else if(/ ngay kia /.test(x))base=dAt(2,0);else if(/(^|\s)(ngày\s+)?mai(?=[\s,.;]|$)/.test(s))base=dAt(1,0);else if(/ hom nay | toi nay | chieu nay | sang nay /.test(x))base=dAt(0,0);
+  else for(const[k,v]of Object.entries(thu)){if(x.includes(' '+k.trim()+' ')){base=new Date();const add=((v-base.getDay())+7)%7||7;base.setDate(base.getDate()+add);break;}}
+  const tm=s.match(/(?<![\d\/])(\d{1,2})\s*(?:h(?!\p{L})|giờ(?!\p{L})|:)\s*(\d{2})?(?![\d\/])/iu);let hh=null,mm=0;
+  if(tm&&+tm[1]<24){hh=+tm[1];mm=tm[2]?+tm[2]:0;if(/ (chieu|toi) /.test(x)&&hh<12)hh+=12;}
+  else if(/ sang /.test(x))hh=7,mm=30;else if(/ chieu /.test(x))hh=14;else if(/ toi /.test(x))hh=20;
+  if(base||hh!==null){d=base||new Date();if(hh!==null)d.setHours(hh,mm,0,0);else d.setHours(7,30,0,0);if(!base&&d<new Date())d.setDate(d.getDate()+1);}
+  if(/ hang ngay | moi ngay /.test(x))lap='ngay';else if(/ hang tuan | moi tuan /.test(x))lap='tuan';else if(/ hang thang | moi thang /.test(x))lap='thang';else if(/ ngay lam viec /.test(x))lap='ngaylv';
+  return{d,lap};}
+function quickNT(){const v=$('#ntQuick').value.trim();if(!v)return;const p=ntParse(v);const at=p.d?p.d.toISOString():(ntPick||null);
+  const n={id:uid(),txt:v,at:at?toLocalInput(at):'',lap:p.lap,uuTien:/!|quan trọng|gấp|khẩn/i.test(v),ghiChu:'',xong:false,tao:new Date().toISOString()};if(n.lap!=='khong'&&n.at)n.ngayThang=new Date(n.at).getDate();
+  ntList().push(n);$('#ntQuick').value='';save();renderNT();renderLich();toast('Đã thêm: '+(n.at?ntWhen(n).txt:'không đặt giờ'));}
+let ntEdit=null;
+function openNT(id,pre){const n=ntList().find(x=>x.id===id)||{txt:'',at:toLocalInput(dAt(1,7,30)),lap:'khong',uuTien:false,ghiChu:'',taskId:'',...(pre||{})};ntEdit=id||null;
+  $('#mdNTT').textContent=id?'✏️ Sửa nhắc việc':'⏰ Thêm nhắc việc cho tôi';$('#ntTxt').value=n.txt||'';$('#ntAt').value=n.at||'';$('#ntLap').value=n.lap||'khong';$('#ntUT').checked=!!n.uuTien;$('#ntGhi').value=n.ghiChu||'';
+  $('#ntTask').innerHTML='<option value="">— Không liên kết —</option>'+[...S.tasks].sort((a,b)=>a.han<b.han?1:-1).map(t=>`<option value="${t.id}">${esc(t.ten)}</option>`).join('');$('#ntTask').value=n.taskId||'';
+  $('#ntDel').classList.toggle('hide',!id);$('#mdNT').classList.remove('hide');setTimeout(()=>$('#ntTxt').focus(),50);}
+function saveNT(){const txt=$('#ntTxt').value.trim();if(!txt){alert('Nhập nội dung việc cần nhắc.');return;}
+  let n=ntList().find(x=>x.id===ntEdit);if(!n){n={id:uid(),xong:false,tao:new Date().toISOString()};ntList().push(n);}
+  const at=$('#ntAt').value;if(n.at!==at)delete n.baoAt;
+  Object.assign(n,{txt,at,lap:$('#ntLap').value,uuTien:$('#ntUT').checked,ghiChu:$('#ntGhi').value.trim(),taskId:$('#ntTask').value,auto:n.auto&&n.at===at?n.auto:false});if(at)n.ngayThang=new Date(at).getDate();
+  if(n.lap!=='khong'&&!at){alert('Việc lặp lại cần đặt ngày giờ bắt đầu.');return;}
+  save();closeMd('mdNT');renderNT();renderLich();toast('Đã lưu nhắc việc');}
+function delNT(){if(!confirm('Xoá nhắc việc này?'))return;const n=ntList().find(x=>x.id===ntEdit);if(n&&n.auto)(S.settings.ntBoQua=S.settings.ntBoQua||[]).push(n.id);
+  S.nhacToi=ntList().filter(x=>x.id!==ntEdit);save();closeMd('mdNT');renderNT();renderLich();}
+function ntXong(id){const n=ntList().find(x=>x.id===id);if(!n)return;
+  if(n.xong){n.xong=false;delete n.xongLuc;}
+  else if(n.lap&&n.lap!=='khong'&&n.at){n.lanXong=(n.lanXong||0)+1;n.at=toLocalInput(ntNext(n));delete n.baoAt;toast('✔ Xong lần này – lần tới: '+ntWhen(n).txt);}
+  else{n.xong=true;n.xongLuc=new Date().toISOString();}
+  save();renderNT();renderLich();ntCloseAlarm(id);}
+function ntHoan(id,v){const n=ntList().find(x=>x.id===id);if(!n)return;const d=v==='mai'?dAt(1,7,30):new Date(Date.now()+v*6e4);n.at=toLocalInput(d);n.hoan=true;delete n.baoAt;
+  save();renderNT();renderLich();ntCloseAlarm(id);toast('Đã hoãn đến '+ntWhen(n).txt);}
+function ntXoaXong(){if(!confirm('Xoá hẳn tất cả việc đã xong?'))return;S.nhacToi=ntList().filter(n=>!n.xong);save();renderNT();}
+function ggLich(id){const n=ntList().find(x=>x.id===id);if(!n||!n.at){alert('Việc chưa đặt ngày giờ.');return;}
+  const d=new Date(n.at),e=new Date(d.getTime()+30*6e4),f=x=>x.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  let u='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(n.txt)+'&dates='+f(d)+'/'+f(e)+'&details='+encodeURIComponent((n.ghiChu?n.ghiChu+'\n':'')+'(Nhắc việc từ Sổ theo dõi CSKV)');
+  const rr={ngay:'RRULE:FREQ=DAILY',ngaylv:'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR',tuan:'RRULE:FREQ=WEEKLY',thang:'RRULE:FREQ=MONTHLY'}[n.lap];if(rr)u+='&recur='+encodeURIComponent(rr);
+  window.open(u,'_blank');}
+/* Tự nhắc trước hạn các nhiệm vụ đã giao CSKV */
+function syncAutoNT(){if(S.settings.ntAuto===false)return false;let doi=false;const L=ntList(),bo=S.settings.ntBoQua||[];
+  S.tasks.forEach(t=>{const id='auto_'+t.id;const[dd,tot]=taskProg(t);let n=L.find(x=>x.id===id);const han=new Date(t.han);
+    const at=new Date(han);at.setDate(at.getDate()-1);at.setHours(8,0,0,0);
+    const can=dd<tot&&han>new Date()&&at>new Date(Date.now()-864e5)&&!bo.includes(id);
+    if(!can){if(n&&!n.xong&&dd>=tot){n.xong=true;n.xongLuc=new Date().toISOString();doi=true;}return;}
+    const txt=`Ngày mai hết hạn: ${t.ten} – kiểm tra, nhắc CSKV chưa nộp`;
+    if(!n){L.push({id,auto:true,txt,at:toLocalInput(at),lap:'khong',uuTien:true,ghiChu:'',taskId:t.id,xong:false,tao:new Date().toISOString()});doi=true;}
+    else if(n.auto&&!n.xong&&(n.at!==toLocalInput(at)||n.txt!==txt)&&!n.hoan){n.at=toLocalInput(at);n.txt=txt;delete n.baoAt;doi=true;}});
+  return doi;}
+/* Chuông + hộp nhắc khi đến giờ */
+let audioCtx=null;document.addEventListener('click',()=>{if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}},{once:true});
+function beep(){if(S.settings.ntSound===false||!audioCtx)return;try{[0,0.25,0.5].forEach((t0,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=[880,1046,1318][i];
+  g.gain.setValueAtTime(0.0001,audioCtx.currentTime+t0);g.gain.exponentialRampToValueAtTime(0.25,audioCtx.currentTime+t0+0.02);g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+t0+0.22);
+  o.connect(g).connect(audioCtx.destination);o.start(audioCtx.currentTime+t0);o.stop(audioCtx.currentTime+t0+0.25);});}catch(e){}}
+const alarmIds=new Set();const baseTitle=document.title;
+function ntTick(){let moi=0;ntList().forEach(n=>{if(n.xong||!n.at)return;if(new Date(n.at)>new Date())return;if(n.baoAt===n.at)return;
+    n.baoAt=n.at;alarmIds.add(n.id);moi++;if(notiOn()){try{const x=new Notification('⏰ '+n.txt,{body:'Đến giờ nhắc việc · '+fmtDT(n.at),tag:'nt'+n.id,requireInteraction:true});x.onclick=()=>{window.focus();x.close();};}catch(e){}}});
+  if(moi){saveLocal();beep();showAlarm();}renderNT();}
+function showAlarm(){const ids=[...alarmIds].filter(id=>{const n=ntList().find(x=>x.id===id);return n&&!n.xong&&new Date(n.at)<=new Date();});alarmIds.clear();ids.forEach(i=>alarmIds.add(i));
+  if(!ids.length){$('#mdAlarm').classList.add('hide');document.title=baseTitle;return;}
+  document.title=`(⏰ ${ids.length}) ${baseTitle}`;
+  $('#alarmList').innerHTML=ids.map(id=>{const n=ntList().find(x=>x.id===id);return`<div class="alm"><div class="ntt">${n.uuTien?'⭐ ':''}${esc(n.txt)}</div><div class="mut">${fmtDT(n.at)}${n.ghiChu?' · '+esc(n.ghiChu):''}</div>
+    <div class="row" style="margin-top:6px"><button class="btn s g" onclick="ntXong('${id}')">✔ Đã xong</button><button class="btn s" onclick="ntHoan('${id}',10)">Hoãn 10 phút</button><button class="btn s" onclick="ntHoan('${id}',60)">Hoãn 1 giờ</button><button class="btn s" onclick="ntHoan('${id}','mai')">Sáng mai 7:30</button>${n.taskId?`<button class="btn s" onclick="goTask('${n.taskId}');ntCloseAlarm('${id}')">📝 Mở nhiệm vụ</button>`:''}</div></div>`;}).join('');
+  $('#mdAlarm').classList.remove('hide');}
+function ntCloseAlarm(id){alarmIds.delete(id);showAlarm();}
+
 /* ---------- CÀI ĐẶT BỔ SUNG ---------- */
 function fillSettings2(){const s=S.settings;
   if($('#bkGio')&&!$('#bkGio').options.length)$('#bkGio').innerHTML=Array.from({length:24},(_,h)=>`<option value="${h}">${String(h).padStart(2,'0')}:00</option>`).join('');
@@ -1402,8 +1603,9 @@ renderAll();
 if(cloudOn())pullCloud(false);
 checkNoti();
 setTimeout(nhacTaiBK,1500);
+setTimeout(ntTick,1200);setInterval(ntTick,30000);
 setInterval(()=>{if(cloudOn()&&!cloud.busy&&!cloud.dirty&&!document.querySelector('.modal:not(.hide)'))pullCloud(false);},120000);
-setInterval(()=>{const n=genLap();if(n){save();renderAll();}checkNoti();},3600000);
+setInterval(()=>{const n=genLap();if(n|syncAutoNT()){save();renderAll();}checkNoti();},3600000);
 setInterval(()=>{renderTQ();const a=+S.settings.auto||0;if(a&&S.settings.script&&(!S.settings.lastSync||Date.now()-new Date(S.settings.lastSync)>a*6e4))syncDrive(true);},60000);
 if(S.settings.script&&+S.settings.auto)setTimeout(()=>syncDrive(true),1500);
 </script>
