@@ -193,9 +193,23 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
     <div class="row" style="margin-top:8px"><button class="btn p" onclick="saveSettings()">Lưu</button><button class="btn" onclick="saveSettings();testDrive()">Kiểm tra kết nối</button><button class="btn" onclick="openGuide()">📘 Hướng dẫn cài đặt + mã Apps Script</button></div>
   </div>
   <div class="card"><h2>☁️ Lưu dữ liệu lên Google (dùng chung nhiều máy)</h2>
-    <p class="mut">Dùng cùng URL Apps Script ở trên (cần mã Apps Script <b>bản 2</b> – xem 📘 Hướng dẫn). Dữ liệu lưu trong file <b>SoTheoDoiCSKV_du_lieu.json</b> trên Google Drive của tài khoản cài script, kèm bảng tính <b>“Sổ theo dõi CSKV – dữ liệu”</b> để xem, lọc, in. Mỗi thay đổi tự lưu sau 2–3 giây; máy khác tự cập nhật mỗi 2 phút. Không công khai.</p>
+    <p class="mut">Dùng cùng URL Apps Script ở trên (cần mã Apps Script <b>bản 3</b> – xem 📘 Hướng dẫn). Dữ liệu lưu trong file <b>SoTheoDoiCSKV_du_lieu.json</b> trên Google Drive của tài khoản cài script, kèm bảng tính <b>“Sổ theo dõi CSKV – dữ liệu”</b> để xem, lọc, in. Mỗi thay đổi tự lưu sau 2–3 giây; máy khác tự cập nhật mỗi 2 phút. Không công khai.</p>
     <label><input type="checkbox" id="sCloud" onchange="toggleCloud(this.checked)"> <b>Bật lưu tự động lên Google</b></label>
     <div class="row" style="margin-top:8px"><button class="btn" onclick="pullCloud(true)">⬇️ Tải dữ liệu từ Google về máy này</button><button class="btn" onclick="pushCloud(true)">⬆️ Ghi dữ liệu máy này lên Google</button><a id="sheetLink" class="btn hide" target="_blank">📊 Mở bảng tính Google Sheets</a></div>
+  </div>
+  <div class="card"><h2>🗄 Sao lưu định kỳ trên Google</h2>
+    <p class="mut">Google tự chụp lại toàn bộ dữ liệu theo lịch vào thư mục <b>SoTheoDoiCSKV_SaoLuu</b> trên Drive của anh, <b>chạy cả khi máy tính tắt</b>. Bản cũ quá số lượng giữ lại sẽ tự chuyển vào thùng rác. Cần bật ☁️ Lưu dữ liệu lên Google ở trên.</p>
+    <div class="row">
+      <label class="f">Lịch sao lưu<select id="bkKieu"><option value="ngay">Hằng ngày</option><option value="tuan">Hằng tuần (Chủ nhật)</option><option value="tat">Tắt</option></select></label>
+      <label class="f">Vào lúc<select id="bkGio"></select></label>
+      <label class="f">Giữ lại<select id="bkGiu"><option value="14">14 bản</option><option value="30" selected>30 bản</option><option value="60">60 bản</option><option value="90">90 bản</option></select></label>
+    </div>
+    <div class="row" style="margin-top:8px"><button class="btn p" onclick="luuLichBK()">💾 Lưu lịch</button><button class="btn" onclick="bkNgay()">📸 Sao lưu ngay</button><button class="btn" onclick="xemBK()">🗂 Xem / khôi phục bản sao lưu</button><a id="bkFolder" class="btn hide" target="_blank">📁 Mở thư mục sao lưu</a></div>
+    <p class="mut" id="bkSt" style="margin-top:6px"></p>
+    <div id="bkList" class="tw"></div>
+    <hr style="border:0;border-top:1px solid var(--bd);margin:12px 0">
+    <div class="row"><label class="f">Nhắc tải bản sao lưu về máy (dự phòng khi mất tài khoản Google)<select id="sNhacBK" onchange="S.settings.nhacBK=+this.value;saveLocal();fillSettings()"><option value="0">Không nhắc</option><option value="7">Mỗi 7 ngày</option><option value="14">Mỗi 14 ngày</option><option value="30">Mỗi 30 ngày</option></select></label>
+      <span class="mut" id="lastExpSt" style="align-self:flex-end"></span></div>
   </div>
   <div class="card"><h2>🔔 Thông báo trên trình duyệt</h2>
     <p class="mut">Báo khi nhiệm vụ còn dưới 24 giờ đến hạn mà còn CSKV chưa nộp, khi quá hạn (mỗi ngày 1 lần), và khi đồng bộ Drive có bài nộp mới. Chỉ hoạt động khi trang đang mở (kể cả ở tab nền).</p>
@@ -294,10 +308,11 @@ td.ed:focus{outline:2px solid var(--info);background:#fff}
 <li>Sao chép <b>URL ứng dụng web</b> (đuôi <code>/exec</code>) → dán vào ô “URL Apps Script” ở tab Cài đặt → <b>Kiểm tra kết nối</b>.</li>
 <li>Khi giao nhiệm vụ, dán link thư mục con vào ô “📁 Link thư mục Google Drive”.</li>
 </ol>
-<div class="card" style="background:#fff7f6"><b>Đã cài bản cũ? Cập nhật lên bản 2</b> (cần cho ☁️ lưu dữ liệu lên Google và 🔍 kiểm tra file trên Drive):
+<div class="card" style="background:#fff7f6"><b>Đã cài bản cũ? Cập nhật lên bản 3</b> (cần cho ☁️ lưu dữ liệu lên Google, 🗄 sao lưu định kỳ và 🔍 kiểm tra file trên Drive):
 <ol style="margin:6px 0 0"><li>Mở dự án Apps Script cũ → xoá hết mã, dán mã mới bên dưới → 💾 Lưu.</li>
 <li><b>Triển khai → Quản lý các bản triển khai</b> → bấm ✏️ (Chỉnh sửa) → mục “Phiên bản” chọn <b>Phiên bản mới</b> → <b>Triển khai</b>. Giữ nguyên URL cũ, không cần dán lại.</li>
-<li>Google sẽ hỏi cấp thêm quyền (Google Sheets, kết nối ngoài): bấm cho phép.</li></ol></div>
+<li>Google sẽ hỏi cấp thêm quyền (Google Sheets, kết nối ngoài, chạy theo lịch): bấm cho phép.</li>
+<li>Vào tab ⚙️ Cài đặt → mục <b>🗄 Sao lưu định kỳ trên Google</b> → chọn lịch → <b>Lưu lịch</b>. Nếu báo lỗi quyền: trong trình soạn thảo Apps Script chọn hàm <code>caiLichSaoLuu</code> → bấm ▶ Chạy 1 lần.</li></ol></div>
 <p><b>Phần mềm nhận diện ai nộp theo thứ tự:</b> (1) Email Google của người tải lên trùng với email khai trong danh sách CSKV; (2) tên file hoặc tên thư mục con có <b>đủ họ tên</b> CSKV (có dấu/không dấu đều được), ví dụ <code>Loc Ha - Nguyen The Quyen - BC PCCC T11.docx</code>. File không nhận diện được sẽ hiện ở mục “File chưa nhận diện” để anh gán tay.</p>
 <p class="mut">Thời điểm nộp = thời điểm file được tải lên Drive (ngày tạo file trên Drive), không đổi khi CSKV sửa file sau đó. Mã token trong script phải trùng với ô “Mã bảo mật” trong phần mềm; người không có token không đọc được danh sách file.</p>
 <div class="row"><b class="grow">Mã Apps Script</b><button class="btn s p" onclick="copyText($('#gsCode').textContent).then(()=>toast('Đã sao chép mã'))">📋 Sao chép mã</button></div>
@@ -757,7 +772,7 @@ async function syncDrive(silent){
 async function testDrive(){if(!S.settings.script){alert('Nhập URL Apps Script trước.');return;}
   try{const d=await callGS([]);if(d.error)throw new Error(d.error);alert('✅ Kết nối thành công với Google Drive của: '+(d.user||'(không rõ)'));}catch(e){alert('❌ '+e.message);}}
 function setSync(m){const el=$('#syncSt');if(el)el.textContent=m||(S.settings.lastSync?'Drive: '+fmtDT(S.settings.lastSync):'');}
-const GS_CODE=tok=>`// Sổ theo dõi CSKV – Apps Script bản 2: đọc thư mục nộp bài, đọc file để kiểm tra, lưu dữ liệu dùng chung
+const GS_CODE=tok=>`// Sổ theo dõi CSKV – Apps Script bản 3: đọc thư mục nộp bài, đọc file để kiểm tra, lưu dữ liệu dùng chung
 const TOKEN = '${tok}'; // phải trùng "Mã bảo mật" trong phần mềm
 
 function doGet(e) {
@@ -768,7 +783,9 @@ function doGet(e) {
     if (p.action === 'load') return out(loadData(), cb);
     if (p.action === 'ver') return out({ ok: true, version: ver() }, cb);
     if (p.action === 'file') return out(fileB64(p.id), cb);
-    const res = { ok: true, v: 2, at: new Date().toISOString(), user: Session.getEffectiveUser().getEmail(), folders: {} };
+    if (p.action === 'bk') return out(bkInfo(), cb);
+    if (p.action === 'bkget') return out(bkGet(p.id), cb);
+    const res = { ok: true, v: 3, at: new Date().toISOString(), user: Session.getEffectiveUser().getEmail(), folders: {} };
     (p.folders || '').split(',').filter(String).forEach(function (id) {
       try { const f = DriveApp.getFolderById(id), files = []; walk(f, '', files, 0); res.folders[id] = { name: f.getName(), files: files }; }
       catch (err) { res.folders[id] = { error: String(err.message || err) }; }
@@ -781,6 +798,8 @@ function doPost(e) {
   let b; try { b = JSON.parse(e.postData.contents); } catch (x) { return out({ error: 'Dữ liệu gửi lên không hợp lệ' }); }
   if (b.token !== TOKEN) return out({ error: 'Sai mã bảo mật (token)' });
   if (b.action === 'save') return out(saveData(b));
+  if (b.action === 'lich') return out(datLich(b.lich || {}));
+  if (b.action === 'bknow') { saoLuuDinhKy(); return out(bkInfo()); }
   return out({ error: 'Thao tác không hợp lệ' });
 }
 
@@ -844,6 +863,49 @@ function mirror(d) {
   put(ss, 'Theo dõi nộp', rows);
 }
 function put(ss, name, rows) { const sh = ss.getSheetByName(name) || ss.insertSheet(name); sh.clearContents(); if (rows.length) sh.getRange(1, 1, rows.length, rows[0].length).setValues(rows); sh.setFrozenRows(1); }
+
+// ===== SAO LƯU ĐỊNH KỲ (chạy trên máy chủ Google, kể cả khi máy tính tắt) =====
+function bkFolder() {
+  const id = props().getProperty('BK_ID');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (e) {} }
+  const f = DriveApp.createFolder('SoTheoDoiCSKV_SaoLuu'); props().setProperty('BK_ID', f.getId()); return f;
+}
+function lich() { try { return JSON.parse(props().getProperty('LICH') || 'null'); } catch (e) { return null; } }
+function saoLuuDinhKy() {
+  const s = dataFile().getBlob().getDataAsString('UTF-8'); if (!s) return;
+  const fd = bkFolder();
+  fd.createFile('SaoLuu_SoTheoDoiCSKV_' + Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd_HHmm') + '.json', s, MimeType.PLAIN_TEXT);
+  const giu = Math.max(3, Number((lich() || {}).giu || 30)), files = [], it = fd.getFiles();
+  while (it.hasNext()) files.push(it.next());
+  files.sort(function (a, b) { return b.getDateCreated() - a.getDateCreated(); });
+  files.slice(giu).forEach(function (x) { x.setTrashed(true); });
+  props().setProperty('BK_LAST', new Date().toISOString());
+}
+function datLich(l) {
+  ScriptApp.getProjectTriggers().forEach(function (tr) { if (tr.getHandlerFunction() === 'saoLuuDinhKy') ScriptApp.deleteTrigger(tr); });
+  const kieu = l.kieu || 'ngay', gio = Math.min(23, Math.max(0, Number(l.gio || 23))), giu = Math.max(3, Number(l.giu || 30));
+  if (kieu !== 'tat') {
+    let b = ScriptApp.newTrigger('saoLuuDinhKy').timeBased().atHour(gio).inTimezone('Asia/Ho_Chi_Minh');
+    b = kieu === 'tuan' ? b.everyWeeks(1).onWeekDay(ScriptApp.WeekDay.SUNDAY) : b.everyDays(1);
+    b.create();
+  }
+  props().setProperty('LICH', JSON.stringify({ kieu: kieu, gio: gio, giu: giu }));
+  return bkInfo();
+}
+// Chạy hàm này 1 lần trong trình soạn thảo Apps Script nếu đặt lịch từ phần mềm bị lỗi quyền
+function caiLichSaoLuu() { datLich({ kieu: 'ngay', gio: 23, giu: 30 }); saoLuuDinhKy(); }
+function bkInfo() {
+  const fd = bkFolder(), files = [], it = fd.getFiles();
+  while (it.hasNext()) { const x = it.next(); files.push({ id: x.getId(), name: x.getName(), at: x.getDateCreated().toISOString(), size: x.getSize() }); }
+  files.sort(function (a, b) { return a.at < b.at ? 1 : -1; });
+  const co = ScriptApp.getProjectTriggers().some(function (tr) { return tr.getHandlerFunction() === 'saoLuuDinhKy'; });
+  return { ok: true, lich: lich(), coLich: co, last: props().getProperty('BK_LAST') || '', folderUrl: fd.getUrl(), files: files.slice(0, 60), tong: files.length };
+}
+function bkGet(id) {
+  const x = DriveApp.getFileById(id);
+  if (x.getParents().next().getId() !== bkFolder().getId()) return { error: 'File không thuộc thư mục sao lưu' };
+  return { ok: true, name: x.getName(), data: JSON.parse(x.getBlob().getDataAsString('UTF-8')) };
+}
 
 function out(o, cb) {
   const s = JSON.stringify(o);
@@ -990,7 +1052,7 @@ const HDR_RASOAT=['TT','Mã tài khoản','TÊN CƠ SỞ','CHỦ CƠ SỞ / CH�
 const KT_LOAI={'':'Không kiểm tra tự động','raSoat':'Phiếu rà soát cơ sở (mục I, II, III)'};
 const ym=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
 const hhmm=()=>new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-const LOCAL_KEYS=['script','token','cloud','noti','auto','lastSync','sheetUrl'];
+const LOCAL_KEYS=['script','token','cloud','noti','auto','lastSync','sheetUrl','lastExport','nhacBK','bkInfo'];
 
 function ensureDefaults(){
   S.mau=S.mau||[];
@@ -1285,8 +1347,43 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEv=e
 async function caiApp(){if(!installEv){alert('Trên điện thoại: mở menu trình duyệt → “Thêm vào màn hình chính”.');return;}installEv.prompt();await installEv.userChoice;installEv=null;$('#btnInstall').classList.add('hide');}
 if('serviceWorker'in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 
+/* ---------- SAO LƯU ĐỊNH KỲ TRÊN GOOGLE ---------- */
+const LICH_TXT=l=>!l?'chưa đặt lịch':l.kieu==='tat'?'đã tắt':`${l.kieu==='tuan'?'Chủ nhật hằng tuần':'hằng ngày'} lúc ${String(l.gio).padStart(2,'0')}:00, giữ ${l.giu} bản`;
+function bkStatus(){const el=$('#bkSt');if(!el)return;const i=S.settings.bkInfo;
+  if(!S.settings.script){el.innerHTML='⚠️ Chưa nhập URL Apps Script.';return;}
+  if(!i){el.innerHTML='Bấm “🗂 Xem / khôi phục bản sao lưu” để kiểm tra tình trạng.';return;}
+  el.innerHTML=`Lịch: <b>${i.coLich?LICH_TXT(i.lich):'chưa đặt lịch'}</b> · Lần sao lưu gần nhất: <b>${i.last?fmtDT(i.last):'chưa có'}</b> · Đang có <b>${i.tong||0}</b> bản`;
+  const a=$('#bkFolder');if(a&&i.folderUrl){a.href=i.folderUrl;a.classList.remove('hide');}}
+function needV3(r){if(r&&r.error)throw new Error(r.error);if(!r||!('files'in r))throw new Error('Mã Apps Script chưa phải bản 3 – cập nhật theo 📘 Hướng dẫn');return r;}
+function needCloud(){if(!S.settings.script){alert('Nhập URL Apps Script ở mục “Kết nối Google Drive” trước.');return false;}
+  if(!S.settings.cloud){alert('Bật “☁️ Lưu tự động lên Google” trước, để có dữ liệu trên Google mà sao lưu.');return false;}return true;}
+async function luuLichBK(){if(!needCloud())return;const lich={kieu:$('#bkKieu').value,gio:+$('#bkGio').value,giu:+$('#bkGiu').value};
+  try{$('#bkSt').textContent='⏳ Đang đặt lịch…';const r=needV3(await gsPost({action:'lich',lich}));S.settings.bkInfo=r;saveLocal();bkStatus();toast(lich.kieu==='tat'?'Đã tắt sao lưu định kỳ':'Đã đặt lịch: '+LICH_TXT(lich));}
+  catch(e){bkStatus();alert('Chưa đặt được lịch: '+e.message+'\n\nCách khác: trong trình soạn thảo Apps Script, chọn hàm caiLichSaoLuu và bấm ▶ Chạy 1 lần (lịch 23h hằng ngày, giữ 30 bản).');}}
+async function bkNgay(){if(!needCloud())return;try{if(cloud.dirty||cloud.timer){await pushCloud(false);}$('#bkSt').textContent='⏳ Đang sao lưu…';
+  const r=needV3(await gsPost({action:'bknow'}));S.settings.bkInfo=r;saveLocal();bkStatus();renderBKList(r);toast('Đã tạo bản sao lưu trên Google');}catch(e){bkStatus();alert('Lỗi: '+e.message);}}
+async function xemBK(){if(!S.settings.script){alert('Nhập URL Apps Script trước.');return;}
+  try{$('#bkSt').textContent='⏳ Đang tải danh sách…';const r=needV3(await jsonp(gsUrl('bk')));S.settings.bkInfo=r;saveLocal();bkStatus();renderBKList(r);}catch(e){bkStatus();alert('Lỗi: '+e.message);}}
+function renderBKList(r){const el=$('#bkList');if(!el)return;
+  el.innerHTML=(r.files||[]).length?`<table><tr><th>Bản sao lưu</th><th>Thời điểm</th><th>Dung lượng</th><th></th></tr>${r.files.map(x=>`<tr><td>${esc(x.name)}</td><td>${fmtDT(x.at)}</td><td>${Math.round(x.size/1024)} KB</td><td><button class="btn s" onclick="khoiPhucBK('${x.id}','${esc(x.name)}')">↩️ Khôi phục bản này</button></td></tr>`).join('')}</table>`:'<p class="mut">Chưa có bản sao lưu nào.</p>';}
+async function khoiPhucBK(id,name){if(!confirm(`Khôi phục toàn bộ dữ liệu về bản “${name}”?\n\nDữ liệu hiện tại sẽ bị thay thế (trên máy này và trên Google). Phần mềm tự sao lưu bản hiện tại trước khi khôi phục.`))return;
+  try{await gsPost({action:'bknow'});const r=await jsonp(gsUrl('bkget')+'&id='+encodeURIComponent(id));if(r.error)throw new Error(r.error);
+    const keep={};LOCAL_KEYS.forEach(k=>keep[k]=S.settings[k]);S=r.data;S.settings={...(S.settings||{}),...keep};
+    S.settings.tpl={...DEF_TPL,...(S.settings.tpl||{})};S.tasks.forEach(t=>{t.log=t.log||[];t.fileMap=t.fileMap||{};t.files=t.files||[];});ensureDefaults();saveLocal();
+    await pushCloud(true);try{const i=await jsonp(gsUrl('bk'));if(i.files){S.settings.bkInfo=i;saveLocal();}}catch(e){}renderAll();renderBKList(S.settings.bkInfo||{});toast('Đã khôi phục bản '+name);}catch(e){alert('Không khôi phục được: '+e.message);}}
+function nhacTaiBK(){const n=+(S.settings.nhacBK??7);if(!n||!S.cskv.length)return;const last=S.settings.lastExport?new Date(S.settings.lastExport):null;
+  if(last&&Date.now()-last<n*864e5)return;const key='nhacbk'+new Date().toDateString();try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1');}catch(e){}
+  const el=document.createElement('div');el.className='card';el.style.cssText='background:#fff8e1;border-color:#f0cf8f';
+  el.innerHTML=`<div class="row"><div class="grow">💾 <b>${last?'Đã '+Math.floor((Date.now()-last)/864e5)+' ngày chưa tải bản sao lưu về máy.':'Chưa có bản sao lưu nào trên máy này.'}</b> <span class="mut">Nên tải 1 bản dự phòng (lưu vào ổ D: hoặc USB).</span></div><button class="btn p" onclick="exportJSON();this.closest('.card').remove()">💾 Tải bản sao lưu</button><button class="btn" onclick="this.closest('.card').remove()">Để sau</button></div>`;
+  $('main').prepend(el);}
+
 /* ---------- CÀI ĐẶT BỔ SUNG ---------- */
-function fillSettings2(){const s=S.settings;['capTren','diaDanh','kyHieu','chucVuKy','nguoiKy'].forEach(k=>{const el=$('#s_'+k);if(el)el.value=s[k]||'';});
+function fillSettings2(){const s=S.settings;
+  if($('#bkGio')&&!$('#bkGio').options.length)$('#bkGio').innerHTML=Array.from({length:24},(_,h)=>`<option value="${h}">${String(h).padStart(2,'0')}:00</option>`).join('');
+  const L=(s.bkInfo&&s.bkInfo.lich)||{kieu:'ngay',gio:23,giu:30};if($('#bkKieu')){$('#bkKieu').value=L.kieu;$('#bkGio').value=String(L.gio);$('#bkGiu').value=String(L.giu);}
+  if($('#sNhacBK'))$('#sNhacBK').value=String(s.nhacBK??7);
+  if($('#lastExpSt'))$('#lastExpSt').textContent=s.lastExport?'Lần tải về máy gần nhất: '+fmtDT(s.lastExport):'Chưa tải bản sao lưu nào về máy';
+  bkStatus();['capTren','diaDanh','kyHieu','chucVuKy','nguoiKy'].forEach(k=>{const el=$('#s_'+k);if(el)el.value=s[k]||'';});
   Object.entries(s.kpi).forEach(([k,v])=>{const el=$('#kp_'+k);if(el)el.value=v;});
   if($('#sCloud'))$('#sCloud').checked=!!s.cloud;const sl=$('#sheetLink');if(sl){sl.classList.toggle('hide',!s.sheetUrl);sl.href=s.sheetUrl||'#';}
   const ns=$('#notiSt');if(ns)ns.textContent=notiOn()?'Đang bật':('Notification'in window&&Notification.permission==='denied'?'Trình duyệt đang chặn thông báo – mở cài đặt trang để cho phép':'Đang tắt');}
@@ -1294,7 +1391,7 @@ function saveSettings2(s){['capTren','diaDanh','kyHieu','chucVuKy','nguoiKy'].fo
   Object.keys(s.kpi).forEach(k=>{const el=$('#kp_'+k);if(el&&el.value!=='')s.kpi[k]=+el.value;});}
 
 /* ===== SAO LƯU ===== */
-function exportJSON(){const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`SaoLuu_SoTheoDoiCSKV_${new Date().toISOString().slice(0,10)}.json`;a.click();}
+function exportJSON(){S.settings.lastExport=new Date().toISOString();saveLocal();setTimeout(fillSettings,100);const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`SaoLuu_SoTheoDoiCSKV_${new Date().toISOString().slice(0,10)}.json`;a.click();}
 function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.cskv||!d.tasks)throw 0;if(!confirm('Thay toàn bộ dữ liệu hiện tại bằng bản sao lưu?'))return;S=d;save();load();renderAll();if(cloudOn())pushCloud(true);toast('Đã khôi phục');}catch(e){alert('File sao lưu không hợp lệ');}inp.value='';};r.readAsText(f);}
 
 function closeMd(id){$('#'+id).classList.add('hide');}
@@ -1304,6 +1401,7 @@ load();initMonths();
 renderAll();
 if(cloudOn())pullCloud(false);
 checkNoti();
+setTimeout(nhacTaiBK,1500);
 setInterval(()=>{if(cloudOn()&&!cloud.busy&&!cloud.dirty&&!document.querySelector('.modal:not(.hide)'))pullCloud(false);},120000);
 setInterval(()=>{const n=genLap();if(n){save();renderAll();}checkNoti();},3600000);
 setInterval(()=>{renderTQ();const a=+S.settings.auto||0;if(a&&S.settings.script&&(!S.settings.lastSync||Date.now()-new Date(S.settings.lastSync)>a*6e4))syncDrive(true);},60000);
