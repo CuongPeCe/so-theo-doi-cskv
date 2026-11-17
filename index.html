@@ -190,7 +190,7 @@ th{background:#f4f8fd;color:#3d5370}tr:hover td{background:#f8fbff}
           <span class="mut">Khi đến giờ: hiện hộp nhắc giữa màn hình + âm báo (trang phải đang mở). Muốn điện thoại cũng báo: bấm 📅 để đưa việc vào Google Lịch.</span>
         </div></div>
     </div>
-    <div class="card"><div class="row"><h2 class="grow" style="margin:0">Việc của tôi</h2><select id="ntF" onchange="renderNT()"><option value="">Tất cả</option><option value="imp">⭐ Quan trọng</option><option value="tay">Tôi tự thêm</option><option value="auto">🤖 Tự tạo từ nhiệm vụ</option></select><button class="btn p s" onclick="openNT()">＋ Thêm chi tiết</button></div>
+    <div class="card"><div class="row"><h2 class="grow" style="margin:0">Việc của tôi</h2><select id="ntF" onchange="renderNT()"><option value="">Tất cả</option><option value="imp">⭐ Quan trọng</option><option value="tay">Tôi tự thêm</option><option value="auto">🤖 Tự tạo từ nhiệm vụ</option><option value="vb">📄 Hạn theo văn bản đến</option></select><button class="btn p s" onclick="openNT()">＋ Thêm chi tiết</button></div>
       <div id="ntList" style="margin-top:10px"></div></div>
   </div>
 </section>
@@ -200,7 +200,7 @@ th{background:#f4f8fd;color:#3d5370}tr:hover td{background:#f8fbff}
   <p class="mut">Kéo thả thẻ giữa các cột để đổi trạng thái (trên điện thoại dùng nút trên thẻ). Cột “Chờ duyệt” chỉ hiện với nhiệm vụ bật “Cần duyệt bài”.</p><div id="kb" class="kb"></div></div></section>
 <!-- LỊCH -->
 <section id="tab-lich" class="hide"><div class="card"><div class="row"><button class="btn" onclick="lichM(-1)">◀</button><h2 id="lichT" class="grow" style="margin:0;text-align:center"></h2><button class="btn" onclick="lichM(0)">Tháng này</button><button class="btn" onclick="lichM(1)">▶</button></div>
-  <div id="lich" class="lich"></div><p class="mut">Màu theo lĩnh vực. ⏰ nền xanh nhạt: việc của tôi. Ô viền nét đứt 🔁: nhiệm vụ lặp lại sẽ tự tạo. Bấm vào để mở.</p></div></section>
+  <div id="lich" class="lich"></div><p class="mut">Màu theo lĩnh vực. 📄 nền đỏ: hạn theo văn bản đến. ⏰ nền xanh nhạt: việc của tôi / ngày nhắc. Ô viền nét đứt 🔁: nhiệm vụ lặp lại sẽ tự tạo. Bấm vào để mở.</p></div></section>
 <!-- MẪU -->
 <section id="tab-mau" class="hide"><div class="card"><div class="row"><h2 class="grow" style="margin:0">📋 Mẫu nhiệm vụ &amp; việc lặp lại</h2><button class="btn p" onclick="openMau()">＋ Thêm mẫu</button></div>
   <p class="mut">Lưu sẵn các loại việc hay giao (tên, căn cứ, link nộp, tiêu chí đạt, kiểm tra tự động). Bật “Lặp lại hằng tháng” để phần mềm tự tạo nhiệm vụ mỗi tháng, giao cho toàn bộ CSKV đang theo dõi.</p><div id="mauList" class="tasklist"></div></div></section>
@@ -263,9 +263,16 @@ th{background:#f4f8fd;color:#3d5370}tr:hover td{background:#f8fbff}
     <div class="row" style="margin-top:8px"><button class="btn p" onclick="saveSettings()">Lưu</button><button class="btn" onclick="saveSettings();testDrive()">Kiểm tra kết nối</button><button class="btn" onclick="openGuide()">📘 Hướng dẫn cài đặt + mã Apps Script</button></div>
   </div>
   <div class="card"><h2>☁️ Lưu dữ liệu lên Google (dùng chung nhiều máy)</h2>
-    <p class="mut">Dùng cùng URL Apps Script ở trên (cần mã Apps Script <b>bản 3</b> – xem 📘 Hướng dẫn). Dữ liệu lưu trong file <b>SoTheoDoiCSKV_du_lieu.json</b> trên Google Drive của tài khoản cài script, kèm bảng tính <b>“Sổ theo dõi CSKV – dữ liệu”</b> để xem, lọc, in. Mỗi thay đổi tự lưu sau 2–3 giây; máy khác tự cập nhật mỗi 2 phút. Không công khai.</p>
+    <p class="mut">Dùng cùng URL Apps Script ở trên (cần mã Apps Script <b>bản 4</b> – xem 📘 Hướng dẫn). Dữ liệu lưu trong file <b>SoTheoDoiCSKV_du_lieu.json</b> trên Google Drive của tài khoản cài script, kèm bảng tính <b>“Sổ theo dõi CSKV – dữ liệu”</b> để xem, lọc, in. Mỗi thay đổi tự lưu sau 2–3 giây; máy khác tự cập nhật mỗi 2 phút. Không công khai.</p>
     <label><input type="checkbox" id="sCloud" onchange="toggleCloud(this.checked)"> <b>Bật lưu tự động lên Google</b></label>
     <div class="row" style="margin-top:8px"><button class="btn" onclick="pullCloud(true)">⬇️ Tải dữ liệu từ Google về máy này</button><button class="btn" onclick="pushCloud(true)">⬆️ Ghi dữ liệu máy này lên Google</button><a id="sheetLink" class="btn hide" target="_blank">📊 Mở bảng tính Google Sheets</a></div>
+  </div>
+  <div class="card"><h2>📄 Văn bản đến &amp; nhắc hạn báo cáo</h2>
+    <p class="mut">Thả văn bản cấp trên vào thư mục Drive <b>“01. Văn bản đến”</b>. Mỗi sáng Claude đọc văn bản mới, ghi vào bảng <b>Sổ theo dõi văn bản đến</b> và tách các hạn sang trang <b>Lịch hạn</b>. Phần mềm đọc trang này để đưa hạn vào 📅 Lịch và ⏰ Việc của tôi; Apps Script gửi email nhắc hạn hằng ngày (chạy cả khi máy tắt). Cần mã Apps Script bản 4.</p>
+    <div class="row"><label class="f grow">Link bảng Sổ theo dõi văn bản đến (Google Sheets)<input id="sVbSheet" placeholder="https://docs.google.com/spreadsheets/d/…"></label>
+      <label class="f">Email nhắc hạn hằng ngày<select id="sVbGio"><option value="">Tắt</option><option value="6">06:00</option><option value="7">07:00</option><option value="8">08:00</option><option value="13">13:00</option><option value="16">16:00</option></select></label></div>
+    <div class="row" style="margin-top:8px"><button class="btn p" onclick="vbLuu()">💾 Lưu &amp; kết nối</button><button class="btn" onclick="syncVB(false)">🔄 Cập nhật hạn từ bảng</button><button class="btn" onclick="vbThu()">✉️ Gửi thử email nhắc</button><a id="vbLink" class="btn hide" target="_blank">📊 Mở bảng</a></div>
+    <p class="mut" id="vbSt" style="margin-top:6px"></p>
   </div>
   <div class="card"><h2>🗄 Sao lưu định kỳ trên Google</h2>
     <p class="mut">Google tự chụp lại toàn bộ dữ liệu theo lịch vào thư mục <b>SoTheoDoiCSKV_SaoLuu</b> trên Drive của anh, <b>chạy cả khi máy tính tắt</b>. Bản cũ quá số lượng giữ lại sẽ tự chuyển vào thùng rác. Cần bật ☁️ Lưu dữ liệu lên Google ở trên.</p>
@@ -378,10 +385,10 @@ th{background:#f4f8fd;color:#3d5370}tr:hover td{background:#f8fbff}
 <li>Sao chép <b>URL ứng dụng web</b> (đuôi <code>/exec</code>) → dán vào ô “URL Apps Script” ở tab Cài đặt → <b>Kiểm tra kết nối</b>.</li>
 <li>Khi giao nhiệm vụ, dán link thư mục con vào ô “📁 Link thư mục Google Drive”.</li>
 </ol>
-<div class="card" style="background:#f0f6ff"><b>Đã cài bản cũ? Cập nhật lên bản 3</b> (cần cho ☁️ lưu dữ liệu lên Google, 🗄 sao lưu định kỳ và 🔍 kiểm tra file trên Drive):
+<div class="card" style="background:#f0f6ff"><b>Đã cài bản cũ? Cập nhật lên bản 4</b> (cần cho ☁️ lưu dữ liệu lên Google, 🗄 sao lưu định kỳ, 📄 văn bản đến & nhắc hạn, 🔍 kiểm tra file trên Drive):
 <ol style="margin:6px 0 0"><li>Mở dự án Apps Script cũ → xoá hết mã, dán mã mới bên dưới → 💾 Lưu.</li>
 <li><b>Triển khai → Quản lý các bản triển khai</b> → bấm ✏️ (Chỉnh sửa) → mục “Phiên bản” chọn <b>Phiên bản mới</b> → <b>Triển khai</b>. Giữ nguyên URL cũ, không cần dán lại.</li>
-<li>Google sẽ hỏi cấp thêm quyền (Google Sheets, kết nối ngoài, chạy theo lịch): bấm cho phép.</li>
+<li>Google sẽ hỏi cấp thêm quyền (Google Sheets, kết nối ngoài, chạy theo lịch, gửi email): bấm cho phép.</li>
 <li>Vào tab ⚙️ Cài đặt → mục <b>🗄 Sao lưu định kỳ trên Google</b> → chọn lịch → <b>Lưu lịch</b>. Nếu báo lỗi quyền: trong trình soạn thảo Apps Script chọn hàm <code>caiLichSaoLuu</code> → bấm ▶ Chạy 1 lần.</li></ol></div>
 <p><b>Phần mềm nhận diện ai nộp theo thứ tự:</b> (1) Email Google của người tải lên trùng với email khai trong danh sách CSKV; (2) tên file hoặc tên thư mục con có <b>đủ họ tên</b> CSKV (có dấu/không dấu đều được), ví dụ <code>Loc Ha - Nguyen The Quyen - BC PCCC T11.docx</code>. File không nhận diện được sẽ hiện ở mục “File chưa nhận diện” để anh gán tay.</p>
 <p class="mut">Thời điểm nộp = thời điểm file được tải lên Drive (ngày tạo file trên Drive), không đổi khi CSKV sửa file sau đó. Mã token trong script phải trùng với ô “Mã bảo mật” trong phần mềm; người không có token không đọc được danh sách file.</p>
@@ -855,7 +862,7 @@ async function syncDrive(silent){
 async function testDrive(){if(!S.settings.script){alert('Nhập URL Apps Script trước.');return;}
   try{const d=await callGS([]);if(d.error)throw new Error(d.error);alert('✅ Kết nối thành công với Google Drive của: '+(d.user||'(không rõ)'));}catch(e){alert('❌ '+e.message);}}
 function setSync(m){const el=$('#syncSt');if(el)el.textContent=m||(S.settings.lastSync?'Drive: '+fmtDT(S.settings.lastSync):'');}
-const GS_CODE=tok=>`// Sổ theo dõi CSKV – Apps Script bản 3: đọc thư mục nộp bài, đọc file để kiểm tra, lưu dữ liệu dùng chung
+const GS_CODE=tok=>`// Sổ theo dõi CSKV – Apps Script bản 4: đọc thư mục nộp bài, đọc file để kiểm tra, lưu dữ liệu dùng chung
 const TOKEN = '${tok}'; // phải trùng "Mã bảo mật" trong phần mềm
 
 function doGet(e) {
@@ -867,8 +874,9 @@ function doGet(e) {
     if (p.action === 'ver') return out({ ok: true, version: ver() }, cb);
     if (p.action === 'file') return out(fileB64(p.id), cb);
     if (p.action === 'bk') return out(bkInfo(), cb);
+    if (p.action === 'lichhan') return out(lichHan(), cb);
     if (p.action === 'bkget') return out(bkGet(p.id), cb);
-    const res = { ok: true, v: 3, at: new Date().toISOString(), user: Session.getEffectiveUser().getEmail(), folders: {} };
+    const res = { ok: true, v: 4, at: new Date().toISOString(), user: Session.getEffectiveUser().getEmail(), folders: {} };
     (p.folders || '').split(',').filter(String).forEach(function (id) {
       try { const f = DriveApp.getFolderById(id), files = []; walk(f, '', files, 0); res.folders[id] = { name: f.getName(), files: files }; }
       catch (err) { res.folders[id] = { error: String(err.message || err) }; }
@@ -883,6 +891,9 @@ function doPost(e) {
   if (b.action === 'save') return out(saveData(b));
   if (b.action === 'lich') return out(datLich(b.lich || {}));
   if (b.action === 'bknow') { saoLuuDinhKy(); return out(bkInfo()); }
+  if (b.action === 'vbcfg') return out(vbCfg(b));
+  if (b.action === 'vbxong') return out(vbXong(b.ma, b.tt));
+  if (b.action === 'vbtest') { nhacHanHangNgay(true); return out({ ok: true }); }
   return out({ error: 'Thao tác không hợp lệ' });
 }
 
@@ -988,6 +999,63 @@ function bkGet(id) {
   const x = DriveApp.getFileById(id);
   if (x.getParents().next().getId() !== bkFolder().getId()) return { error: 'File không thuộc thư mục sao lưu' };
   return { ok: true, name: x.getName(), data: JSON.parse(x.getBlob().getDataAsString('UTF-8')) };
+}
+
+// ===== VĂN BẢN ĐẾN & LỊCH HẠN (bảng do Claude cập nhật mỗi sáng) =====
+function vbSheet() {
+  const id = props().getProperty('VB_SHEET'); if (!id) throw new Error('Chưa cài bảng Sổ văn bản đến (tab Cài đặt)');
+  const sh = SpreadsheetApp.openById(id).getSheetByName('Lịch hạn'); if (!sh) throw new Error('Bảng không có trang "Lịch hạn"'); return sh;
+}
+function lichHan() {
+  const v = vbSheet().getDataRange().getDisplayValues();
+  const rows = v.slice(1).filter(function (r) { return r[0]; }).map(function (r) {
+    return { ma: r[0], viec: r[1], han: r[2], nhacTruoc: r[3], dinhKy: r[4], quyTac: r[5], vb: r[6], link: r[7], tt: r[8], linhVuc: r[9], capNhat: r[10] }; });
+  return { ok: true, v: 4, rows: rows, gioNhac: props().getProperty('VB_GIO') || '' };
+}
+function vbXong(ma, tt) {
+  const sh = vbSheet(), v = sh.getRange(1, 1, Math.max(1, sh.getLastRow()), 1).getValues();
+  for (let i = 1; i < v.length; i++) if (String(v[i][0]) === String(ma)) {
+    sh.getRange(i + 1, 9).setValue(tt || 'Đã xong');
+    sh.getRange(i + 1, 11).setValue(Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd HH:mm'));
+    return { ok: true };
+  }
+  return { error: 'Không thấy mã ' + ma };
+}
+function vbCfg(b) {
+  if (b.sheetId) { SpreadsheetApp.openById(b.sheetId); props().setProperty('VB_SHEET', b.sheetId); }
+  ScriptApp.getProjectTriggers().forEach(function (tr) { if (tr.getHandlerFunction() === 'nhacHanHangNgay') ScriptApp.deleteTrigger(tr); });
+  const gio = Number(b.gio);
+  if (b.gio !== '' && b.gio !== undefined && gio >= 0) {
+    ScriptApp.newTrigger('nhacHanHangNgay').timeBased().atHour(gio).everyDays(1).inTimezone('Asia/Ho_Chi_Minh').create();
+    props().setProperty('VB_GIO', String(gio));
+  } else props().setProperty('VB_GIO', '');
+  return lichHan();
+}
+// Gửi email nhắc các hạn đã quá / hôm nay / sắp đến (theo cột "Nhắc trước"), chạy theo lịch hằng ngày
+function nhacHanHangNgay(thu) {
+  const tz = 'Asia/Ho_Chi_Minh', homNay = Utilities.parseDate(Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd'), tz, 'yyyy-MM-dd');
+  const ds = lichHan().rows.filter(function (x) { return x.han && x.tt !== 'Đã xong' && x.tt !== 'Không áp dụng'; }).map(function (x) {
+    let d = null; try { d = Utilities.parseDate(x.han.length > 10 ? x.han : x.han + ' 17:00', tz, 'yyyy-MM-dd HH:mm'); } catch (e) {}
+    const ngay = d ? Math.floor((Utilities.parseDate(Utilities.formatDate(d, tz, 'yyyy-MM-dd'), tz, 'yyyy-MM-dd') - homNay) / 864e5) : null;
+    return { x: x, d: d, ngay: ngay };
+  }).filter(function (o) { return o.d && o.ngay <= (Number(o.x.nhacTruoc) || 2); }).sort(function (a, b) { return a.d - b.d; });
+  if (!ds.length && !thu) return;
+  const f = function (d) { return Utilities.formatDate(d, 'UTC', "yyyyMMdd'T'HHmmss'Z'"); };
+  const dong = ds.map(function (o) {
+    const x = o.x, mau = o.ngay < 0 ? '#fde8e8' : o.ngay === 0 ? '#fff3d6' : '#eef5ff';
+    const tt = o.ngay < 0 ? 'Quá hạn ' + (-o.ngay) + ' ngày' : o.ngay === 0 ? 'Hôm nay' : 'Còn ' + o.ngay + ' ngày';
+    const gg = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(x.viec) + '&dates=' + f(new Date(o.d.getTime() - 30 * 60000)) + '/' + f(o.d) + '&details=' + encodeURIComponent(x.vb || '');
+    return '<tr style="background:' + mau + '"><td style="padding:6px;border:1px solid #ddd"><b>' + x.viec + '</b><br><small>' + (x.vb || '') + (x.dinhKy && x.dinhKy !== 'Không' ? ' · Định kỳ: ' + x.dinhKy : '') + '</small></td>'
+      + '<td style="padding:6px;border:1px solid #ddd;white-space:nowrap">' + Utilities.formatDate(o.d, tz, 'HH:mm dd/MM/yyyy') + '<br><b>' + tt + '</b></td>'
+      + '<td style="padding:6px;border:1px solid #ddd">' + (x.link ? '<a href="' + x.link + '">Mở văn bản</a><br>' : '') + '<a href="' + gg + '">Thêm vào Google Lịch</a></td></tr>';
+  }).join('');
+  const html = '<div style="font-family:Arial,sans-serif;font-size:14px"><p>Các việc theo văn bản cấp trên cần chú ý hôm nay:</p>'
+    + (ds.length ? '<table style="border-collapse:collapse">' + dong + '</table>' : '<p>(Thư thử nghiệm – hiện không có hạn nào cần nhắc.)</p>')
+    + '<p style="color:#666">Làm xong việc nào: đổi Trạng thái thành "Đã xong" ở trang Lịch hạn, hoặc tích xong trong phần mềm Sổ theo dõi CSKV.<br>'
+    + 'Hạn do máy đọc từ văn bản – đề nghị đối chiếu văn bản gốc trước khi sử dụng.<br>'
+    + '<a href="https://docs.google.com/spreadsheets/d/' + props().getProperty('VB_SHEET') + '">Mở bảng theo dõi</a></p></div>';
+  const qua = ds.filter(function (o) { return o.ngay < 0; }).length;
+  MailApp.sendEmail({ to: Session.getEffectiveUser().getEmail(), subject: '[Sổ theo dõi] Nhắc hạn ' + Utilities.formatDate(new Date(), tz, 'dd/MM/yyyy') + ' – ' + ds.length + ' việc' + (qua ? ' (' + qua + ' quá hạn)' : ''), htmlBody: html });
 }
 
 function out(o, cb) {
@@ -1135,7 +1203,7 @@ const HDR_RASOAT=['TT','Mã tài khoản','TÊN CƠ SỞ','CHỦ CƠ SỞ / CH�
 const KT_LOAI={'':'Không kiểm tra tự động','raSoat':'Phiếu rà soát cơ sở (mục I, II, III)'};
 const ym=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
 const hhmm=()=>new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-const LOCAL_KEYS=['script','token','cloud','noti','auto','lastSync','sheetUrl','lastExport','nhacBK','bkInfo'];
+const LOCAL_KEYS=['script','token','cloud','noti','auto','lastSync','sheetUrl','lastExport','nhacBK','bkInfo','vbLast'];
 
 function ensureDefaults(){
   S.mau=S.mau||[];
@@ -1230,11 +1298,13 @@ function renderLich(){const el=$('#lich');if(!el)return;const now=new Date(),bas
   $('#lichT').textContent=`Tháng ${m+1}/${y}`;const off=(base.getDay()+6)%7,ev={},key=d=>d.toDateString();
   S.tasks.forEach(t=>{const d=new Date(t.han);(ev[key(d)]=ev[key(d)]||[]).push({t});});
   ntList().filter(n=>!n.xong&&n.at).forEach(n=>{const d=new Date(n.at);(ev[key(d)]=ev[key(d)]||[]).push({nt:n});});
+  ntList().filter(n=>!n.xong&&n.vbHan).forEach(n=>{const d=new Date(n.vbHan);(ev[key(d)]=ev[key(d)]||[]).push({vbh:n});});
   const kyM=ym(base);S.mau.forEach(mu=>{if(!mu.lap||!mu.lap.bat||(mu.lap.batDau&&kyM<mu.lap.batDau)||S.tasks.some(t=>t.mauId===mu.id&&t.ky===kyM))return;
     if(kyM<ym(now))return;const last=new Date(y,m+1,0).getDate(),d=new Date(y,m,Math.min(+mu.lap.ngayHan||last,last));(ev[key(d)]=ev[key(d)]||[]).push({mu});});
   let h=['Th 2','Th 3','Th 4','Th 5','Th 6','Th 7','CN'].map(x=>`<div class="lh">${x}</div>`).join('');
   for(let i=0;i<42;i++){const d=new Date(y,m,1-off+i);if(i>=35&&d.getMonth()!==m)break;
     h+=`<div class="ld ${d.getMonth()!==m?'mo':''} ${key(d)===key(now)?'td':''}"><span class="n">${d.getDate()}</span>${(ev[key(d)]||[]).map(x=>{
+      if(x.vbh){const d=new Date(x.vbh.vbHan);return`<span class="lt" style="background:#c0392b" title="Hạn: ${esc(x.vbh.txt)}" onclick="openNT('${x.vbh.id}')">📄 ${pad2(d.getHours())}:${pad2(d.getMinutes())} ${esc(x.vbh.txt.replace(/^📄 /,''))}</span>`;}
       if(x.nt){const d=new Date(x.nt.at);return`<span class="lt" style="background:#e6f0fd;color:#1f56b8" title="${esc(x.nt.txt)}" onclick="openNT('${x.nt.id}')">⏰ ${pad2(d.getHours())}:${pad2(d.getMinutes())} ${esc(x.nt.txt)}</span>`;}
       if(x.mu)return`<span class="lt du" title="Sẽ tự tạo: ${esc(x.mu.ten)}">🔁 ${esc(x.mu.ten.replace(/\{thang\}/g,(m+1)+'/'+y))}</span>`;
       const t=x.t,[dd,tot]=taskProg(t);return`<span class="lt" style="background:${NHAN[t.nhan]||'#455a64'}" title="${esc(t.ten)} – đạt ${dd}/${tot}" onclick="goTask('${t.id}')">${dd===tot?'✅':'⏳'} ${dd}/${tot} ${esc(t.ten)}</span>`;}).join('')}</div>`;}
@@ -1475,20 +1545,23 @@ function ntNext(n){const d=new Date(n.at);const step=()=>{if(n.lap==='ngay')d.se
     else if(n.lap==='thang'){const day=n.ngayThang||d.getDate();d.setDate(1);d.setMonth(d.getMonth()+1);d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));}
     else if(n.lap==='ngaylv'){do{d.setDate(d.getDate()+1);}while(d.getDay()===0||d.getDay()===6);}};
   step();while(d<new Date())step();return d;}
-function ntWhen(n){if(!n.at)return{txt:'Không đặt giờ',cls:'t-na',g:'none'};const d=new Date(n.at),now=new Date(),dd=dayDiff(d,now),hm=pad2(d.getHours())+':'+pad2(d.getMinutes());
+function ntWhen(n){if(!n.at)return{txt:'Không đặt giờ',cls:'t-na',g:'none'};
+  if(n.vbHan&&new Date(n.at)<=new Date()){const h=new Date(n.vbHan),now=new Date(),hm2=pad2(h.getHours())+':'+pad2(h.getMinutes());
+    if(h<now){const ms=now-h,hh=Math.floor(ms/36e5);return{txt:'Quá hạn '+(hh<24?Math.max(1,hh)+' giờ':Math.floor(hh/24)+' ngày'),cls:'t-over',g:'qua'};}
+    const dd=dayDiff(h,now);return{txt:dd===0?'Hạn hôm nay '+hm2:dd===1?'Hạn ngày mai '+hm2:'Còn '+dd+' ngày đến hạn',cls:'t-soon',g:'nay'};}const d=new Date(n.at),now=new Date(),dd=dayDiff(d,now),hm=pad2(d.getHours())+':'+pad2(d.getMinutes());
   if(d<now){const ms=now-d,h=Math.floor(ms/36e5);return{txt:'Quá hạn '+(h<1?Math.max(1,Math.round(ms/6e4))+' phút':h<24?h+' giờ':Math.floor(h/24)+' ngày'),cls:'t-over',g:'qua'};}
   if(dd===0)return{txt:'Hôm nay '+hm,cls:'t-soon',g:'nay'};if(dd===1)return{txt:'Ngày mai '+hm,cls:'t-wait',g:'mai'};
   const thu=['CN','T2','T3','T4','T5','T6','T7'][d.getDay()];if(dd<=7)return{txt:`${thu} ${pad2(d.getDate())}/${pad2(d.getMonth()+1)} · ${hm}`,cls:'t-wait',g:'tuan'};
   return{txt:`${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()} · ${hm}`,cls:'t-na',g:'sau'};}
-const NT_G=[['qua','🔴 Quá hạn'],['nay','📌 Hôm nay'],['mai','🌅 Ngày mai'],['tuan','🗓 7 ngày tới'],['sau','⏳ Sau này'],['none','📝 Không đặt giờ']];
+const NT_G=[['qua','🔴 Quá hạn'],['nay','📌 Hôm nay – cần làm'],['mai','🌅 Ngày mai'],['tuan','🗓 7 ngày tới'],['sau','⏳ Sau này'],['none','📝 Không đặt giờ']];
 function ntItem(n,compact){const w=ntWhen(n),t=n.taskId&&S.tasks.find(x=>x.id===n.taskId);
   return`<div class="nti ${n.uuTien?'imp':''} ${n.xong?'done':''}"><button class="ntck" title="${n.xong?'Bỏ đánh dấu':'Đánh dấu đã xong'}" onclick="ntXong('${n.id}')">${n.xong?'✔':''}</button>
    <div class="grow" style="min-width:0"><div class="ntt">${n.uuTien?'⭐ ':''}${esc(n.txt)}</div>
-    <div class="ntm">${n.xong?`<span class="tag t-ok">Xong ${fmtDT(n.xongLuc)}</span>`:`<span class="tag ${w.cls}">${w.txt}</span>`}${n.lap&&n.lap!=='khong'?`<span class="tag t-na">🔁 ${NT_LAP[n.lap]}</span>`:''}${n.auto?'<span class="tag t-na">🤖 tự tạo</span>':''}${t?`<a href="#" onclick="goTask('${t.id}');return false">📝 ${esc(t.ten.length>40?t.ten.slice(0,40)+'…':t.ten)}</a>`:''}</div>
+    <div class="ntm">${n.xong?`<span class="tag t-ok">Xong ${fmtDT(n.xongLuc)}</span>`:`<span class="tag ${w.cls}">${w.txt}</span>`}${n.lap&&n.lap!=='khong'?`<span class="tag t-na">🔁 ${NT_LAP[n.lap]}</span>`:''}${n.vb?`<span class="tag t-late">📄 Hạn ${fmtDT(n.vbHan)}</span>`:n.auto?'<span class="tag t-na">🤖 tự tạo</span>':''}${n.vbLink?`<a href="${esc(n.vbLink)}" target="_blank">📎 Văn bản</a>`:''}${t?`<a href="#" onclick="goTask('${t.id}');return false">📝 ${esc(t.ten.length>40?t.ten.slice(0,40)+'…':t.ten)}</a>`:''}</div>
     ${n.ghiChu&&!compact?`<div class="mut" style="margin-top:2px">${esc(n.ghiChu)}</div>`:''}</div>
    ${n.xong?'':`<div class="ntact"><button class="btn s" title="Hoãn 1 giờ" onclick="ntHoan('${n.id}',60)">⏱ +1h</button>${compact?'':`<button class="btn s" title="Sáng mai 7:30" onclick="ntHoan('${n.id}','mai')">🌅</button><button class="btn s" title="Đưa vào Google Lịch (điện thoại cũng báo)" onclick="ggLich('${n.id}')">📅</button>`}<button class="btn s" title="Sửa" onclick="openNT('${n.id}')">✏️</button></div>`}</div>`;}
 function renderNT(){const L=ntList();const f=($('#ntF')||{}).value||'';
-  const act=L.filter(n=>!n.xong&&(!f||(f==='imp'?n.uuTien:f==='auto'?n.auto:!n.auto))).sort((a,b)=>(a.at||'9')<(b.at||'9')?-1:1);
+  const act=L.filter(n=>!n.xong&&(!f||(f==='imp'?n.uuTien:f==='vb'?n.vb:f==='auto'?(n.auto&&!n.vb):!n.auto))).sort((a,b)=>(a.at||'9')<(b.at||'9')?-1:1);
   const by={};act.forEach(n=>{const g=ntWhen(n).g;(by[g]=by[g]||[]).push(n);});
   const el=$('#ntList');if(el){el.innerHTML=act.length?NT_G.filter(([g])=>by[g]).map(([g,h])=>`<div class="ntg"><div class="ntgh">${h} <span>${by[g].length}</span></div>${by[g].map(n=>ntItem(n)).join('')}</div>`).join('')
       :'<div class="ntempty">🎉 Không còn việc nào cần nhớ.<br><span class="mut">Gõ việc vào ô bên trái rồi bấm Enter để thêm.</span></div>';
@@ -1539,7 +1612,8 @@ function saveNT(){const txt=$('#ntTxt').value.trim();if(!txt){alert('Nhập nộ
 function delNT(){if(!confirm('Xoá nhắc việc này?'))return;const n=ntList().find(x=>x.id===ntEdit);if(n&&n.auto)(S.settings.ntBoQua=S.settings.ntBoQua||[]).push(n.id);
   S.nhacToi=ntList().filter(x=>x.id!==ntEdit);save();closeMd('mdNT');renderNT();renderLich();}
 function ntXong(id){const n=ntList().find(x=>x.id===id);if(!n)return;
-  if(n.xong){n.xong=false;delete n.xongLuc;}
+  if(n.xong){n.xong=false;delete n.xongLuc;if(n.vb)vbGhiXong(n,false);}
+  else if(n.vb){n.xong=true;n.xongLuc=new Date().toISOString();vbGhiXong(n,true);}
   else if(n.lap&&n.lap!=='khong'&&n.at){n.lanXong=(n.lanXong||0)+1;n.at=toLocalInput(ntNext(n));delete n.baoAt;toast('✔ Xong lần này – lần tới: '+ntWhen(n).txt);}
   else{n.xong=true;n.xongLuc=new Date().toISOString();}
   save();renderNT();renderLich();ntCloseAlarm(id);}
@@ -1578,11 +1652,44 @@ function showAlarm(){const ids=[...alarmIds].filter(id=>{const n=ntList().find(x
   $('#mdAlarm').classList.remove('hide');}
 function ntCloseAlarm(id){alarmIds.delete(id);showAlarm();}
 
+/* ---------- VĂN BẢN ĐẾN & LỊCH HẠN ---------- */
+const VB_SHEET_MAC_DINH='';
+const sheetIdOf=u=>{const m=String(u||'').match(/\/d\/([\w-]{20,})/);return m?m[1]:(/^[\w-]{30,}$/.test(String(u||'').trim())?String(u).trim():'');};
+function vbHan(s){const m=String(s||'').match(/(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2}))?/);if(m)return new Date(+m[1],+m[2]-1,+m[3],m[4]?+m[4]:17,m[5]?+m[5]:0);
+  const v=String(s||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);return v?new Date(+v[3],+v[2]-1,+v[1],v[4]?+v[4]:17,v[5]?+v[5]:0):null;}
+function vbStatus(m){const el=$('#vbSt');if(el)el.innerHTML=m||(S.settings.vbLast?`Đã cập nhật lúc <b>${fmtDT(S.settings.vbLast)}</b> · ${S.settings.vbDem||0} hạn đang theo dõi`:'');
+  const a=$('#vbLink');const u=S.settings.vbSheet||VB_SHEET_MAC_DINH;if(a){a.classList.toggle('hide',!u);a.href=u||'#';}}
+function applyVB(rows){const L=ntList();let doi=0,dem=0;const seen=new Set();
+  rows.forEach(x=>{if(!x.ma)return;const id='vb_'+x.ma;seen.add(id);let n=L.find(z=>z.id===id);const xong=x.tt==='Đã xong'||x.tt==='Không áp dụng';const han=vbHan(x.han);
+    if(xong||!han){if(n&&!n.xong){n.xong=true;n.xongLuc=new Date().toISOString();doi++;}return;}
+    dem++;const truoc=Math.max(0,parseInt(x.nhacTruoc)||2);const at=new Date(han);at.setDate(at.getDate()-truoc);at.setHours(8,0,0,0);
+    const txt='📄 '+x.viec,ghi=`Hạn: ${fmtDT(han)}${x.dinhKy&&x.dinhKy!=='Không'?' · Định kỳ: '+x.dinhKy+(x.quyTac?' ('+x.quyTac+')':''):''}${x.vb?' · Căn cứ: '+x.vb:''}`;
+    if(!n){L.push({id,auto:true,vb:true,vbMa:x.ma,vbHan:toLocalInput(han),vbLink:x.link||'',txt,at:toLocalInput(at),lap:'khong',uuTien:true,ghiChu:ghi,xong:false,tao:new Date().toISOString()});doi++;return;}
+    if(n.vbHan!==toLocalInput(han)){n.vbHan=toLocalInput(han);n.at=toLocalInput(at);n.xong=false;delete n.xongLuc;delete n.baoAt;delete n.hoan;doi++;}
+    if(n.txt!==txt||n.ghiChu!==ghi||n.vbLink!==(x.link||'')){n.txt=txt;n.ghiChu=ghi;n.vbLink=x.link||'';doi++;}
+    if(n.xong&&!xong&&n.vbHan===toLocalInput(han)&&!n.vbXongTay){n.xong=false;delete n.xongLuc;doi++;}});
+  S.settings.vbDem=dem;return doi;}
+let vbBusy=false;
+async function syncVB(silent){if(!S.settings.script){if(!silent)alert('Nhập URL Apps Script trước (mục Kết nối Google Drive).');return;}if(vbBusy)return;vbBusy=true;
+  try{vbStatus('⏳ Đang đọc trang Lịch hạn…');const r=await jsonp(gsUrl('lichhan'));if(r.error)throw new Error(r.error);if(!r.rows)throw new Error('Mã Apps Script chưa phải bản 4 – cập nhật theo 📘 Hướng dẫn');
+    const d=applyVB(r.rows);S.settings.vbLast=new Date().toISOString();if(r.gioNhac!==undefined)S.settings.vbGio=r.gioNhac;
+    if(d)save();else saveLocal();renderNT();renderLich();fillSettings();if(!silent)toast(`Đã cập nhật ${S.settings.vbDem} hạn từ bảng văn bản đến`);}
+  catch(e){vbStatus('⚠️ '+e.message);if(!silent)alert('Chưa đọc được bảng: '+e.message);}vbBusy=false;}
+async function vbLuu(){if(!S.settings.script){alert('Nhập URL Apps Script trước.');return;}const u=$('#sVbSheet').value.trim(),id=sheetIdOf(u);
+  if(!id){alert('Link bảng chưa đúng (dạng https://docs.google.com/spreadsheets/d/…).');return;}
+  try{vbStatus('⏳ Đang kết nối…');const r=await gsPost({action:'vbcfg',sheetId:id,gio:$('#sVbGio').value});if(r.error)throw new Error(r.error);if(!r.rows)throw new Error('Mã Apps Script chưa phải bản 4');
+    S.settings.vbSheet=u;S.settings.vbGio=$('#sVbGio').value;saveLocal();applyVB(r.rows);S.settings.vbLast=new Date().toISOString();save();renderNT();renderLich();fillSettings();
+    toast($('#sVbGio').value?`Đã kết nối – email nhắc hạn lúc ${$('#sVbGio').value}:00 hằng ngày`:'Đã kết nối bảng văn bản đến');}
+  catch(e){vbStatus('⚠️ '+e.message);alert('Chưa kết nối được: '+e.message+'\n\nKiểm tra: đã cập nhật Apps Script bản 4 và cấp quyền; tài khoản cài script có quyền mở bảng.');}}
+async function vbThu(){try{const r=await gsPost({action:'vbtest'});if(r.error)throw new Error(r.error);toast('Đã gửi email thử – kiểm tra hộp thư Gmail');}catch(e){alert('Lỗi: '+e.message);}}
+function vbGhiXong(n,xong){if(!n||!n.vbMa||!S.settings.script)return;n.vbXongTay=xong;gsPost({action:'vbxong',ma:n.vbMa,tt:xong?'Đã xong':'Chưa làm'}).then(r=>{if(r&&r.error)toast('⚠️ Chưa ghi được lên bảng: '+r.error);else toast(xong?'Đã ghi “Đã xong” lên bảng văn bản đến':'Đã mở lại việc trên bảng');}).catch(()=>toast('⚠️ Chưa ghi được lên bảng (mất mạng?)'));}
+
 /* ---------- CÀI ĐẶT BỔ SUNG ---------- */
 function fillSettings2(){const s=S.settings;
   if($('#bkGio')&&!$('#bkGio').options.length)$('#bkGio').innerHTML=Array.from({length:24},(_,h)=>`<option value="${h}">${String(h).padStart(2,'0')}:00</option>`).join('');
   const L=(s.bkInfo&&s.bkInfo.lich)||{kieu:'ngay',gio:23,giu:30};if($('#bkKieu')){$('#bkKieu').value=L.kieu;$('#bkGio').value=String(L.gio);$('#bkGiu').value=String(L.giu);}
   if($('#sNhacBK'))$('#sNhacBK').value=String(s.nhacBK??7);
+  if($('#sVbSheet'))$('#sVbSheet').value=s.vbSheet||VB_SHEET_MAC_DINH;if($('#sVbGio'))$('#sVbGio').value=String(s.vbGio??'');vbStatus();
   if($('#lastExpSt'))$('#lastExpSt').textContent=s.lastExport?'Lần tải về máy gần nhất: '+fmtDT(s.lastExport):'Chưa tải bản sao lưu nào về máy';
   bkStatus();['capTren','diaDanh','kyHieu','chucVuKy','nguoiKy'].forEach(k=>{const el=$('#s_'+k);if(el)el.value=s[k]||'';});
   Object.entries(s.kpi).forEach(([k,v])=>{const el=$('#kp_'+k);if(el)el.value=v;});
@@ -1604,6 +1711,7 @@ if(cloudOn())pullCloud(false);
 checkNoti();
 setTimeout(nhacTaiBK,1500);
 setTimeout(ntTick,1200);setInterval(ntTick,30000);
+if(S.settings.script&&(S.settings.vbSheet||VB_SHEET_MAC_DINH)){setTimeout(()=>syncVB(true),2500);setInterval(()=>syncVB(true),30*60000);}
 setInterval(()=>{if(cloudOn()&&!cloud.busy&&!cloud.dirty&&!document.querySelector('.modal:not(.hide)'))pullCloud(false);},120000);
 setInterval(()=>{const n=genLap();if(n|syncAutoNT()){save();renderAll();}checkNoti();},3600000);
 setInterval(()=>{renderTQ();const a=+S.settings.auto||0;if(a&&S.settings.script&&(!S.settings.lastSync||Date.now()-new Date(S.settings.lastSync)>a*6e4))syncDrive(true);},60000);
