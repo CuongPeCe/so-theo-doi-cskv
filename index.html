@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sổ theo dõi CSKV</title>
+<title>Sổ công việc Cường</title>
 <meta name="theme-color" content="#2b6cdf">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
@@ -131,7 +131,7 @@ th{background:#f4f8fd;color:#3d5370}tr:hover td{background:#f8fbff}
 </head>
 <body>
 <header>
-  <div><h1>📒 SỔ THEO DÕI TIẾN ĐỘ, CHẬM MUỘN CỦA CSKV</h1><small id="hdDonVi"></small></div>
+  <div><h1>📒 SỔ CÔNG VIỆC CƯỜNG</h1><small id="hdDonVi"></small></div>
   <div class="row"><div class="srch"><input id="gSearch" placeholder="🔍 Tìm đ/c, thôn, nhiệm vụ, cơ sở…" oninput="doSearch()" onfocus="doSearch()" autocomplete="off"><div id="gRes" class="sres hide"></div></div><small id="cloudSt" style="opacity:.9"></small><small id="syncSt" style="opacity:.9"></small><button class="btn s hide" id="btnInstall" onclick="caiApp()">📲 Cài ứng dụng</button><button class="btn s p" onclick="openNT()">⏰ Nhắc tôi</button><button class="btn s" onclick="openSummary()">📊 Tổng hợp gửi Zalo</button>
   <div class="mnu"><button class="btn s" title="Thêm" onclick="event.stopPropagation();$('#mnuL').classList.toggle('hide')">⋯</button>
    <div class="mnuL hide" id="mnuL"><a onclick="syncDrive(false)">🔄 Đồng bộ Drive</a><a onclick="exportJSON()">💾 Sao lưu về máy</a><a onclick="$('#fImp').click()">📂 Khôi phục từ file</a><a onclick="document.querySelector('#nav [data-t=ch]').click()">⚙️ Cài đặt</a></div></div><input type="file" id="fImp" accept=".json" class="hide" onchange="importJSON(this)"></div>
@@ -1034,12 +1034,14 @@ function vbCfg(b) {
 // Gửi email nhắc các hạn đã quá / hôm nay / sắp đến (theo cột "Nhắc trước"), chạy theo lịch hằng ngày
 function nhacHanHangNgay(thu) {
   const tz = 'Asia/Ho_Chi_Minh', homNay = Utilities.parseDate(Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd'), tz, 'yyyy-MM-dd');
-  const ds = lichHan().rows.filter(function (x) { return x.han && x.tt !== 'Đã xong' && x.tt !== 'Không áp dụng'; }).map(function (x) {
+  const tatCa = lichHan().rows, canXN = tatCa.filter(function (x) { return x.tt === 'Cần xác nhận'; }).length;
+  const ds = tatCa.filter(function (x) { return x.han && x.tt !== 'Đã xong' && x.tt !== 'Không áp dụng' && x.tt !== 'Cần xác nhận'; }).map(function (x) {
     let d = null; try { d = Utilities.parseDate(x.han.length > 10 ? x.han : x.han + ' 17:00', tz, 'yyyy-MM-dd HH:mm'); } catch (e) {}
     const ngay = d ? Math.floor((Utilities.parseDate(Utilities.formatDate(d, tz, 'yyyy-MM-dd'), tz, 'yyyy-MM-dd') - homNay) / 864e5) : null;
     return { x: x, d: d, ngay: ngay };
   }).filter(function (o) { return o.d && o.ngay <= (Number(o.x.nhacTruoc) || 2); }).sort(function (a, b) { return a.d - b.d; });
-  if (!ds.length && !thu) return;
+  if (!ds.length && !thu && !canXN) return;
+  if (!ds.length && !thu && new Date().getDay() !== 1) return; // chỉ còn việc cần xác nhận: nhắc vào thứ Hai
   const f = function (d) { return Utilities.formatDate(d, 'UTC', "yyyyMMdd'T'HHmmss'Z'"); };
   const dong = ds.map(function (o) {
     const x = o.x, mau = o.ngay < 0 ? '#fde8e8' : o.ngay === 0 ? '#fff3d6' : '#eef5ff';
@@ -1051,11 +1053,12 @@ function nhacHanHangNgay(thu) {
   }).join('');
   const html = '<div style="font-family:Arial,sans-serif;font-size:14px"><p>Các việc theo văn bản cấp trên cần chú ý hôm nay:</p>'
     + (ds.length ? '<table style="border-collapse:collapse">' + dong + '</table>' : '<p>(Thư thử nghiệm – hiện không có hạn nào cần nhắc.)</p>')
-    + '<p style="color:#666">Làm xong việc nào: đổi Trạng thái thành "Đã xong" ở trang Lịch hạn, hoặc tích xong trong phần mềm Sổ theo dõi CSKV.<br>'
+    + (canXN ? '<p style="background:#fff1e0;padding:8px;border-radius:6px">🟠 Còn <b>' + canXN + '</b> việc đã qua hạn ở trạng thái <b>Cần xác nhận</b> (chưa rõ đã làm chưa) – mở trang Lịch hạn để đánh dấu Đã xong / Không áp dụng.</p>' : '')
+    + '<p style="color:#666">Làm xong việc nào: đổi Trạng thái thành "Đã xong" ở trang Lịch hạn, hoặc tích xong trong phần mềm Sổ công việc Cường.<br>'
     + 'Hạn do máy đọc từ văn bản – đề nghị đối chiếu văn bản gốc trước khi sử dụng.<br>'
     + '<a href="https://docs.google.com/spreadsheets/d/' + props().getProperty('VB_SHEET') + '">Mở bảng theo dõi</a></p></div>';
   const qua = ds.filter(function (o) { return o.ngay < 0; }).length;
-  MailApp.sendEmail({ to: Session.getEffectiveUser().getEmail(), subject: '[Sổ theo dõi] Nhắc hạn ' + Utilities.formatDate(new Date(), tz, 'dd/MM/yyyy') + ' – ' + ds.length + ' việc' + (qua ? ' (' + qua + ' quá hạn)' : ''), htmlBody: html });
+  MailApp.sendEmail({ to: Session.getEffectiveUser().getEmail(), subject: '[Sổ công việc] Nhắc hạn ' + Utilities.formatDate(new Date(), tz, 'dd/MM/yyyy') + ' – ' + ds.length + ' việc' + (qua ? ' (' + qua + ' quá hạn)' : ''), htmlBody: html });
 }
 
 function out(o, cb) {
@@ -1298,7 +1301,7 @@ function renderLich(){const el=$('#lich');if(!el)return;const now=new Date(),bas
   $('#lichT').textContent=`Tháng ${m+1}/${y}`;const off=(base.getDay()+6)%7,ev={},key=d=>d.toDateString();
   S.tasks.forEach(t=>{const d=new Date(t.han);(ev[key(d)]=ev[key(d)]||[]).push({t});});
   ntList().filter(n=>!n.xong&&n.at).forEach(n=>{const d=new Date(n.at);(ev[key(d)]=ev[key(d)]||[]).push({nt:n});});
-  ntList().filter(n=>!n.xong&&n.vbHan).forEach(n=>{const d=new Date(n.vbHan);(ev[key(d)]=ev[key(d)]||[]).push({vbh:n});});
+  ntList().filter(n=>!n.xong&&n.vbHan&&!n.cx).forEach(n=>{const d=new Date(n.vbHan);(ev[key(d)]=ev[key(d)]||[]).push({vbh:n});});
   const kyM=ym(base);S.mau.forEach(mu=>{if(!mu.lap||!mu.lap.bat||(mu.lap.batDau&&kyM<mu.lap.batDau)||S.tasks.some(t=>t.mauId===mu.id&&t.ky===kyM))return;
     if(kyM<ym(now))return;const last=new Date(y,m+1,0).getDate(),d=new Date(y,m,Math.min(+mu.lap.ngayHan||last,last));(ev[key(d)]=ev[key(d)]||[]).push({mu});});
   let h=['Th 2','Th 3','Th 4','Th 5','Th 6','Th 7','CN'].map(x=>`<div class="lh">${x}</div>`).join('');
@@ -1545,7 +1548,7 @@ function ntNext(n){const d=new Date(n.at);const step=()=>{if(n.lap==='ngay')d.se
     else if(n.lap==='thang'){const day=n.ngayThang||d.getDate();d.setDate(1);d.setMonth(d.getMonth()+1);d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));}
     else if(n.lap==='ngaylv'){do{d.setDate(d.getDate()+1);}while(d.getDay()===0||d.getDay()===6);}};
   step();while(d<new Date())step();return d;}
-function ntWhen(n){if(!n.at)return{txt:'Không đặt giờ',cls:'t-na',g:'none'};
+function ntWhen(n){if(n.cx)return{txt:'Cần xác nhận',cls:'t-soon',g:'cx'};if(!n.at)return{txt:'Không đặt giờ',cls:'t-na',g:'none'};
   if(n.vbHan&&new Date(n.at)<=new Date()){const h=new Date(n.vbHan),now=new Date(),hm2=pad2(h.getHours())+':'+pad2(h.getMinutes());
     if(h<now){const ms=now-h,hh=Math.floor(ms/36e5);return{txt:'Quá hạn '+(hh<24?Math.max(1,hh)+' giờ':Math.floor(hh/24)+' ngày'),cls:'t-over',g:'qua'};}
     const dd=dayDiff(h,now);return{txt:dd===0?'Hạn hôm nay '+hm2:dd===1?'Hạn ngày mai '+hm2:'Còn '+dd+' ngày đến hạn',cls:'t-soon',g:'nay'};}const d=new Date(n.at),now=new Date(),dd=dayDiff(d,now),hm=pad2(d.getHours())+':'+pad2(d.getMinutes());
@@ -1553,11 +1556,11 @@ function ntWhen(n){if(!n.at)return{txt:'Không đặt giờ',cls:'t-na',g:'none'
   if(dd===0)return{txt:'Hôm nay '+hm,cls:'t-soon',g:'nay'};if(dd===1)return{txt:'Ngày mai '+hm,cls:'t-wait',g:'mai'};
   const thu=['CN','T2','T3','T4','T5','T6','T7'][d.getDay()];if(dd<=7)return{txt:`${thu} ${pad2(d.getDate())}/${pad2(d.getMonth()+1)} · ${hm}`,cls:'t-wait',g:'tuan'};
   return{txt:`${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()} · ${hm}`,cls:'t-na',g:'sau'};}
-const NT_G=[['qua','🔴 Quá hạn'],['nay','📌 Hôm nay – cần làm'],['mai','🌅 Ngày mai'],['tuan','🗓 7 ngày tới'],['sau','⏳ Sau này'],['none','📝 Không đặt giờ']];
+const NT_G=[['qua','🔴 Quá hạn'],['nay','📌 Hôm nay – cần làm'],['mai','🌅 Ngày mai'],['tuan','🗓 7 ngày tới'],['sau','⏳ Sau này'],['cx','🟠 Đã qua hạn – cần xác nhận đã làm chưa (tích ✔ nếu đã xong)'],['none','📝 Không đặt giờ']];
 function ntItem(n,compact){const w=ntWhen(n),t=n.taskId&&S.tasks.find(x=>x.id===n.taskId);
   return`<div class="nti ${n.uuTien?'imp':''} ${n.xong?'done':''}"><button class="ntck" title="${n.xong?'Bỏ đánh dấu':'Đánh dấu đã xong'}" onclick="ntXong('${n.id}')">${n.xong?'✔':''}</button>
    <div class="grow" style="min-width:0"><div class="ntt">${n.uuTien?'⭐ ':''}${esc(n.txt)}</div>
-    <div class="ntm">${n.xong?`<span class="tag t-ok">Xong ${fmtDT(n.xongLuc)}</span>`:`<span class="tag ${w.cls}">${w.txt}</span>`}${n.lap&&n.lap!=='khong'?`<span class="tag t-na">🔁 ${NT_LAP[n.lap]}</span>`:''}${n.vb?`<span class="tag t-late">📄 Hạn ${fmtDT(n.vbHan)}</span>`:n.auto?'<span class="tag t-na">🤖 tự tạo</span>':''}${n.vbLink?`<a href="${esc(n.vbLink)}" target="_blank">📎 Văn bản</a>`:''}${t?`<a href="#" onclick="goTask('${t.id}');return false">📝 ${esc(t.ten.length>40?t.ten.slice(0,40)+'…':t.ten)}</a>`:''}</div>
+    <div class="ntm">${n.xong?`<span class="tag t-ok">Xong ${fmtDT(n.xongLuc)}</span>`:`<span class="tag ${w.cls}">${w.txt}</span>`}${n.lap&&n.lap!=='khong'?`<span class="tag t-na">🔁 ${NT_LAP[n.lap]}</span>`:''}${n.vb&&n.cx?`<span class="tag t-na">Hạn cũ ${fmtD(n.vbHan)}</span>`:n.vb?`<span class="tag t-late">📄 Hạn ${fmtDT(n.vbHan)}</span>`:n.auto?'<span class="tag t-na">🤖 tự tạo</span>':''}${n.vbLink?`<a href="${esc(n.vbLink)}" target="_blank">📎 Văn bản</a>`:''}${t?`<a href="#" onclick="goTask('${t.id}');return false">📝 ${esc(t.ten.length>40?t.ten.slice(0,40)+'…':t.ten)}</a>`:''}</div>
     ${n.ghiChu&&!compact?`<div class="mut" style="margin-top:2px">${esc(n.ghiChu)}</div>`:''}</div>
    ${n.xong?'':`<div class="ntact"><button class="btn s" title="Hoãn 1 giờ" onclick="ntHoan('${n.id}',60)">⏱ +1h</button>${compact?'':`<button class="btn s" title="Sáng mai 7:30" onclick="ntHoan('${n.id}','mai')">🌅</button><button class="btn s" title="Đưa vào Google Lịch (điện thoại cũng báo)" onclick="ggLich('${n.id}')">📅</button>`}<button class="btn s" title="Sửa" onclick="openNT('${n.id}')">✏️</button></div>`}</div>`;}
 function renderNT(){const L=ntList();const f=($('#ntF')||{}).value||'';
@@ -1622,7 +1625,7 @@ function ntHoan(id,v){const n=ntList().find(x=>x.id===id);if(!n)return;const d=v
 function ntXoaXong(){if(!confirm('Xoá hẳn tất cả việc đã xong?'))return;S.nhacToi=ntList().filter(n=>!n.xong);save();renderNT();}
 function ggLich(id){const n=ntList().find(x=>x.id===id);if(!n||!n.at){alert('Việc chưa đặt ngày giờ.');return;}
   const d=new Date(n.at),e=new Date(d.getTime()+30*6e4),f=x=>x.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
-  let u='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(n.txt)+'&dates='+f(d)+'/'+f(e)+'&details='+encodeURIComponent((n.ghiChu?n.ghiChu+'\n':'')+'(Nhắc việc từ Sổ theo dõi CSKV)');
+  let u='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(n.txt)+'&dates='+f(d)+'/'+f(e)+'&details='+encodeURIComponent((n.ghiChu?n.ghiChu+'\n':'')+'(Nhắc việc từ Sổ công việc Cường)');
   const rr={ngay:'RRULE:FREQ=DAILY',ngaylv:'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR',tuan:'RRULE:FREQ=WEEKLY',thang:'RRULE:FREQ=MONTHLY'}[n.lap];if(rr)u+='&recur='+encodeURIComponent(rr);
   window.open(u,'_blank');}
 /* Tự nhắc trước hạn các nhiệm vụ đã giao CSKV */
@@ -1662,6 +1665,10 @@ function vbStatus(m){const el=$('#vbSt');if(el)el.innerHTML=m||(S.settings.vbLas
 function applyVB(rows){const L=ntList();let doi=0,dem=0;const seen=new Set();
   rows.forEach(x=>{if(!x.ma)return;const id='vb_'+x.ma;seen.add(id);let n=L.find(z=>z.id===id);const xong=x.tt==='Đã xong'||x.tt==='Không áp dụng';const han=vbHan(x.han);
     if(xong||!han){if(n&&!n.xong){n.xong=true;n.xongLuc=new Date().toISOString();doi++;}return;}
+    if(x.tt==='Cần xác nhận'){const txt='📄 '+x.viec,ghi=`Hạn cũ: ${fmtDT(han)}${x.vb?' · Căn cứ: '+x.vb:''} · Đã qua hạn – xác nhận đã làm chưa`;
+      if(!n){L.push({id,auto:true,vb:true,cx:true,vbMa:x.ma,vbHan:toLocalInput(han),vbLink:x.link||'',txt,at:'',lap:'khong',uuTien:false,ghiChu:ghi,xong:false,tao:new Date().toISOString()});doi++;}
+      else if(!n.cx||n.xong){n.cx=true;n.at='';n.xong=false;delete n.xongLuc;n.txt=txt;n.ghiChu=ghi;doi++;}return;}
+    if(n&&n.cx){delete n.cx;doi++;}
     dem++;const truoc=Math.max(0,parseInt(x.nhacTruoc)||2);const at=new Date(han);at.setDate(at.getDate()-truoc);at.setHours(8,0,0,0);
     const txt='📄 '+x.viec,ghi=`Hạn: ${fmtDT(han)}${x.dinhKy&&x.dinhKy!=='Không'?' · Định kỳ: '+x.dinhKy+(x.quyTac?' ('+x.quyTac+')':''):''}${x.vb?' · Căn cứ: '+x.vb:''}`;
     if(!n){L.push({id,auto:true,vb:true,vbMa:x.ma,vbHan:toLocalInput(han),vbLink:x.link||'',txt,at:toLocalInput(at),lap:'khong',uuTien:true,ghiChu:ghi,xong:false,tao:new Date().toISOString()});doi++;return;}

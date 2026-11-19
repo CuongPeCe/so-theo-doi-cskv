@@ -1,5 +1,5 @@
 /* Sổ theo dõi CSKV – service worker: mở được khi mạng yếu, luôn ưu tiên bản mới nhất */
-const C = 'so-cskv-v2';
+const C = 'so-cskv-v3';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(C).then(c => c.addAll(CORE))); });
 self.addEventListener('activate', e => e.waitUntil(

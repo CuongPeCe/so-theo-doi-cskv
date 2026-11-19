@@ -1,4 +1,4 @@
-# Sổ theo dõi tiến độ, chậm muộn báo cáo của CSKV
+# Sổ công việc Cường
 
 Ứng dụng web (chạy trên trình duyệt, cài được lên điện thoại) để giao việc và theo dõi việc nộp báo cáo của Cảnh sát khu vực.
 

@@ -1,6 +1,6 @@
 {
-  "name": "Sổ theo dõi tiến độ, chậm muộn của CSKV",
-  "short_name": "Sổ CSKV",
+  "name": "Sổ công việc Cường",
+  "short_name": "Sổ công việc",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
